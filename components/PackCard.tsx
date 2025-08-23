@@ -17,15 +17,13 @@ export default function PackCard(product: PackCardProps) {
 
   return (
     <div className="pack-card">
-      {/* Card Header */}
       <div className="pack-header">
         <h3 className="pack-title">{product.title}</h3>
         <p className="pack-subtitle">{product.subtitle}</p>
-        <div className="pack-price">{product.price}</div>
+        <div className="pack-price">{product.price} L</div>
         <div className="pack-duration">{product.duration}</div>
       </div>
 
-      {/* Card Body */}
       <div className="pack-body">
         <ul className="pack-features">
           {product.features.map((feature, index) => (
@@ -36,13 +34,11 @@ export default function PackCard(product: PackCardProps) {
         </ul>
       </div>
 
-      {/* Card Footer */}
       <div className="pack-footer">
         <button
           className="pack-button"
           onClick={()=> addItem(product)}
-          disabled={false}
-        >
+          disabled={false}>
           Activate
         </button>
       </div>

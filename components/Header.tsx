@@ -1,14 +1,17 @@
 "use client";
 import img from "./../public/assets/logo.webp";
-
+import { Search } from 'lucide-react';
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
+import {useCart} from "react-use-cart";
+import SearchBar from "@/components/SearchBar";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const {
+    isEmpty, totalUniqueItems} = useCart();
   const menuItems = [
     { name: "Mobile", href: "/" },
     { name: "Fits & TV", href: "/fits-tv" },
@@ -43,10 +46,15 @@ export default function Header() {
 
         {/* Header Buttons */}
         <div className="header-buttons">
-          <Link href="/" className="header-button">🔍</Link>
-          <Link href="/cart" className="header-button">
-            <CartIcon width={25} height={25} />
-          </Link>
+          <SearchBar/>
+          <div className="cart-icon-container">
+            <Link href="/cart" className="header-button">
+              <CartIcon width={25} height={25} />
+            </Link>
+            {!isEmpty && (
+                <span className="cart-badge">{totalUniqueItems}</span>
+            )}
+          </div>
           <button
             className="mobile-menu-button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -56,7 +64,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       <nav className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
         {menuItems.map((item) => (
           <a

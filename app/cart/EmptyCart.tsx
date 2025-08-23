@@ -14,12 +14,12 @@ export default function  EmptyCart(){
                 <CartIcon margin width={80} height={80} />
 
                 <div className={styles["empty-cart-body"]}>
-                    <h2>Cart is empty</h2>
+                    <h2>Shopping cart is empty</h2>
                     <p>Add a Packet</p>
                 </div>
 
                 <Link href="/" className={styles["shop-button"]}>
-                    Go to eShop
+                    Go Back
                 </Link>
             </div>
         </>

@@ -1,6 +1,7 @@
 "use client"
 import {useEffect, useState} from "react";
 import PackCard from "@/components/PackCard";
+import {ChevronRight} from "lucide-react";
 export default function Carousel(){
 
     const packs = [
@@ -75,7 +76,6 @@ export default function Carousel(){
             <h2 className="section-title"><span className="color-red">Tourist Packs</span> Plans & Pricing</h2>
 
             <div className="carousel-container">
-                {/* Previous Button - now with disabled state */}
                 <button onClick={goToPrevious} className="carousel-button prev" disabled={currentIndex === 0}>
                     &#10094;
                 </button>
@@ -101,8 +101,8 @@ export default function Carousel(){
                 </div>
 
                 {/* Next Button - now with disabled state */}
-                <button onClick={goToNext} className="carousel-button next" disabled={currentIndex === maxIndex}>
-                    &#10095;
+                <button aria-label="Next" onClick={goToNext} className="carousel-button next" disabled={currentIndex === maxIndex}>
+                    <ChevronRight size={24} strokeWidth={1} />
                 </button>
             </div>
         </section>

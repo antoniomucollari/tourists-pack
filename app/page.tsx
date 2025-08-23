@@ -7,16 +7,21 @@ const activationSteps = [
     number: "1",
     title: "Choose Pack",
     text: "Select the tourist pack that fits your needs",
+    img: "/images/choosePack.jpg",
   },
   {
     number: "2",
     title: "Click Activate",
     text: "Press the activate button on your chosen pack",
+    img: "/images/install.jpg"
+
   },
   {
     number: "3",
     title: "Start Using",
     text: "Your pack is ready to use immediately",
+    img: "/images/startUsing.jpg"
+
   },
 ];
 
@@ -61,6 +66,7 @@ export default function HomePage() {
               number={step.number}
               title={step.title}
               text={step.text}
+              img={step.img}
             />
           ))}
         </div>
