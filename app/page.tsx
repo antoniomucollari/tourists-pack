@@ -49,7 +49,7 @@ export default function HomePage() {
       <main className="main">
         {/* Hero Section */}
         <section className="hero">
-          <h1 className="hero-title">Welcome to Vodafone Albania</h1>
+          <h1 className="hero-title">Welcome to <span className="highlightTxt">Vodafone Albania</span></h1>
           <p className="hero-text">
             Stay connected during your visit to Albania with our special tourist
             packages. Choose the perfect plan for your needs.

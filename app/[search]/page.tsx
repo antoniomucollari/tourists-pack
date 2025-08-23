@@ -1,13 +1,14 @@
-
-export default function SearchString({ params }: UserPageProps){
-    function decodeSearchParam(param: string): string {
-        return param.replace(/%20/g, " "); // replaces "%20" with space
-    }
-    return(<>{decodeSearchParam(params.search)}</>)
+export default async function SearchString({ params }: UserPageProps) {
+    const { search } = await params; // await params before using
+    return (
+        <>
+            {decodeURIComponent(search)}
+        </>
+    );
 }
 
 interface UserPageProps {
-    params: {
+    params: Promise<{
         search: string;
-    };
+    }>;
 }

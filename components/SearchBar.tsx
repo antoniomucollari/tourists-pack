@@ -1,32 +1,50 @@
-import {Search} from "lucide-react";
-import {FormEvent} from "react";
-import { useRouter } from "next/navigation";
+"use client";
 
-export default function SearchBar(){
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search } from "lucide-react"; // using lucide for icon
+
+export default function SearchBar() {
     const router = useRouter();
+    const [query, setQuery] = useState("");
+    const [open, setOpen] = useState(false);
+
     const handleSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formElements = event.currentTarget.elements as typeof event.currentTarget.elements & {
-            search: { value: string };
-        };
 
-            const query = formElements.search.value;
-        if (query) {
-            router.push(`/${query}`);
+        if (!query.trim()) {
+            // toggle input visibility if empty
+            setOpen((prev) => !prev);
+            return;
         }
+
+        router.push(`/${encodeURIComponent(query)}`);
         console.log("Searching for:", query);
+
+        // reset after search
+        setQuery("");
+        setOpen(false);
     };
 
     return (
         <form onSubmit={handleSearch} className="search-container">
-            <input
-                type="text"
-                name="search"
-                className="search-input"
-                placeholder="Search"
-                aria-label="Search"
-            />
-            <button type="submit" className="search-button" aria-label="Submit search">
+            {open && (
+                <input
+                    type="text"
+                    name="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="search-input"
+                    placeholder="Search"
+                    aria-label="Search"
+                    autoFocus
+                />
+            )}
+            <button
+                type="submit"
+                className="search-button"
+                aria-label="Submit search"
+            >
                 <Search strokeWidth={1.5} />
             </button>
         </form>
