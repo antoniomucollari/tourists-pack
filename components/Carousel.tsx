@@ -5,31 +5,35 @@ export default function Carousel(){
 
     const packs = [
         {
+            id: "1",
             title: "Basic Pack",
             subtitle: "Perfect for short visits",
-            price: "500 L",
+            price: 500,
             duration: "3 days",
             features: ["2GB Data", "50 Minutes", "100 SMS"],
         },
         {
+            id: "2",
             title: "Standard Pack",
             subtitle: "Great for week-long stays",
-            price: "1000 L",
+            price: 1000,
             duration: "7 days",
             features: ["5GB Data", "100 Minutes", "Unlimited SMS"],
             isPopular: true
         },
         {
+            id: "3",
             title: "Advanced Pack",
             subtitle: "Great for week-long stays",
-            price: "1500 L",
+            price: 1500,
             duration: "3 days",
             features: ["∞ GB Data", "100 Minutes", "Unlimited SMS"],
         },
         {
+            id: "4",
             title: "Ultimated Pack",
             subtitle: "Great for week-long stays",
-            price: "2000 L",
+            price: 2000,
             duration: "3 days",
             features: ["∞ GB Data", "100 Minutes", "Unlimited SMS"],
         },
@@ -84,6 +88,7 @@ export default function Carousel(){
                         {packs.map((pack, index) => (
                             <div className={`carousel-slide  ${pack.isPopular ? 'popular' : ''}`} key={index}>
                                 <PackCard
+                                    id={pack.id}
                                     title={pack.title}
                                     subtitle={pack.subtitle}
                                     price={pack.price}

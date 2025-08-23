@@ -257,7 +257,9 @@ body {
   max-width: 600px;
   margin: 0 auto;
 }
-
+.header-buttons a{
+  text-decoration: none;
+}
 .section-title {
   text-align: center;
   font-size: 28px;

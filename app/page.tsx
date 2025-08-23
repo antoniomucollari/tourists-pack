@@ -1,6 +1,3 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import PackCard from "../components/PackCard";
 import { ActivationStep } from "@/components/ActivationStep";
 import Accordion from "@/components/Accordion/Accordion";
 import Carousel from "@/components/Carousel";
@@ -43,7 +40,6 @@ const faqData = [
 export default function HomePage() {
   return (
     <div className="page">
-      <Header />
       <img src="https://home.vodafone.al/tourist/_next/static/media/Desktop_EN.92db70a3.jpeg" alt="banner-img"/>
       <main className="main">
         {/* Hero Section */}
@@ -55,9 +51,8 @@ export default function HomePage() {
           </p>
         </section>
 
-        {/* Packs Section */}
         <Carousel/>
-        {/* How to Activate Section */}
+
         <h2 className="section-title">How to Activate</h2>
         <div className="steps">
           {activationSteps.map((step, index) => (
@@ -80,7 +75,6 @@ export default function HomePage() {
           ))}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

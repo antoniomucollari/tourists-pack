@@ -3,6 +3,8 @@ import img from "./../public/assets/logo.webp";
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,13 +21,16 @@ export default function Header() {
     <header className="header">
       <div className="header-content">
         {/* Logo */}
-        <Image
-          src={img}
-          objectFit="contain"
-          alt="vodafone logo"
-          width={50}
-          height={50}
-        />
+
+        <Link href="/" passHref>
+          <Image
+              src={img}
+              alt="vodafone logo"
+              width={50}
+              height={50}
+              style={{ objectFit: "contain", cursor: "pointer" }}
+          />
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="nav">
@@ -38,8 +43,10 @@ export default function Header() {
 
         {/* Header Buttons */}
         <div className="header-buttons">
-          <button className="header-button">🔍</button>
-          <button className="header-button">🛒</button>
+          <Link href="/" className="header-button">🔍</Link>
+          <Link href="/cart" className="header-button">
+            <CartIcon width={25} height={25} />
+          </Link>
           <button
             className="mobile-menu-button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

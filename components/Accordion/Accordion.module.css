@@ -64,6 +64,7 @@
     overflow: hidden;
     animation: slide-down 0.3s ease-out;
     color: rgb(102, 102, 102);
+    text-align: left;
 }
 
 @keyframes slide-down {
@@ -77,10 +78,9 @@
     }
 }
 
-
-/* Styling for the paragraph text inside the content area */
 .accordion-content p {
     margin: 0;
     color: #4a5568;
     line-height: 1.6;
+
 }
