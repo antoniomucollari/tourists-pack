@@ -1,0 +1,86 @@
+
+/* The main container for a single accordion item */
+.accordionItem {
+    max-width: 1160px;
+    width: 1160px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 1rem; /* Space between accordion items */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease-in-out;
+}
+.accordionItem.open{
+    background-color: #ff000012;
+}
+@media (max-width: 1200px) {
+    .accordionItem {
+        max-width: 600px; /* Changes the max-width on screens 768px or less */
+        width: 100%;
+    }
+}
+.accordion-item:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* The clickable title area, styled as a button */
+.accordionTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+/* Removes the default blue outline when the button is clicked */
+.accordionTitle:focus {
+    outline: none;
+}
+.accordionItem.open .accordionTitle h3 {
+    color: #c00000; /* A dark red */
+}
+/* Styling for the title text (h3) */
+.accordionTitle h3 {
+    font-weight: bold;
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2d3748;
+}
+
+/* Styling for the '+' and '-' icon */
+.accordionTitle span {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #e53e3e;
+    transition: transform 0.3s ease;
+}
+
+.accordionContent {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    overflow: hidden;
+    animation: slide-down 0.3s ease-out;
+    color: rgb(102, 102, 102);
+}
+
+@keyframes slide-down {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 200px; /* Adjust if your content is taller */
+        opacity: 1;
+    }
+}
+
+
+/* Styling for the paragraph text inside the content area */
+.accordion-content p {
+    margin: 0;
+    color: #4a5568;
+    line-height: 1.6;
+}
