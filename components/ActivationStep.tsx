@@ -18,7 +18,6 @@ export const ActivationStep = ({
       <div>
             <h3 className="step-title">{title}</h3>
             <p className="step-text">{text}</p>
-
       </div>
   </div>
 );

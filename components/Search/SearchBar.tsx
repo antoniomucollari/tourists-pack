@@ -14,10 +14,7 @@ export default function SearchBar() {
             setOpen((prev) => !prev);
             return;
         }
-
         router.push(`/${encodeURIComponent(query)}`);
-            console.log(`/results?search=${encodeURIComponent(query)}`);
-
         // reset after search
         setQuery("");
         setOpen(false);

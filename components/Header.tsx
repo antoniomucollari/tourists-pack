@@ -1,16 +1,22 @@
 "use client";
 import img from "./../public/assets/logo.webp";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
 import {useCart} from "react-use-cart";
-import SearchBar from "@/components/SearchBar";
+import SearchBar from "@/components/Search/SearchBar";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const {
-    isEmpty, totalUniqueItems} = useCart();
+  const { isEmpty, totalUniqueItems} = useCart();
+  const [isClient, setIsClient] = useState(false);
+
+  // 2. Use useEffect to set the state to true after the component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const menuItems = [
     { name: "Mobile", href: "/" },
     { name: "Fits & TV", href: "/fits-tv" },
@@ -50,16 +56,13 @@ export default function Header() {
             <Link href="/cart" className="header-button">
               <CartIcon width={25} height={25} />
             </Link>
-            {!isEmpty && (
+            {isClient && !isEmpty && (
                 <span className="cart-badge">{totalUniqueItems}</span>
             )}
           </div>
           <button
             className="mobile-menu-button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            ☰
-          </button>
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>☰</button>
         </div>
       </div>
 

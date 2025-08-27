@@ -38,7 +38,7 @@ body {
   padding: 15px 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 100000;
 }
 
 .header-content {
@@ -645,4 +645,11 @@ text-align: start;
 .map-container{
   margin: 5rem auto;
   z-index: 1;
+}
+
+.loading{
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

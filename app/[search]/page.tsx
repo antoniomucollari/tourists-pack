@@ -1,6 +1,14 @@
-'use client'
-import { useRouter } from "next/router";
-export default function SearchPage() {
-    const { query } = useRouter();
-    return <h1>Results for: {decodeURIComponent(query.searchstring as string)}</h1>;
+import { use } from 'react';
+
+
+export default function Page(props: SearchPageProps ) {
+
+    const search = use(props.params).search;
+    // const search = resolvedParams.search;
+
+    return <h1>Results for: {decodeURIComponent(search)}</h1>;
+}
+
+interface SearchPageProps {
+    params: Promise<{ search: string }>;
 }
