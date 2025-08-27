@@ -1,9 +1,7 @@
-"use client";
-
+'use client'
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react"; // using lucide for icon
-
 export default function SearchBar() {
     const router = useRouter();
     const [query, setQuery] = useState("");
@@ -11,7 +9,6 @@ export default function SearchBar() {
 
     const handleSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
         if (!query.trim()) {
             // toggle input visibility if empty
             setOpen((prev) => !prev);
@@ -19,7 +16,7 @@ export default function SearchBar() {
         }
 
         router.push(`/${encodeURIComponent(query)}`);
-        console.log("Searching for:", query);
+            console.log(`/results?search=${encodeURIComponent(query)}`);
 
         // reset after search
         setQuery("");

@@ -20,7 +20,7 @@
     grid-template-columns: 1fr;
     gap: 2rem;
 }
-/* Left Column - Cart Items */
+/* Left Column - Page Items */
 .cart-items-column {
     background-color: #ffffff;
     padding: 1.5rem;
@@ -174,7 +174,7 @@
     background-color: #9a0707;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
-/* Empty Cart Styles */
+/* Empty Page Styles */
 .cart-empty {
     display: flex;
     flex-direction: column;

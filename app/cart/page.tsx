@@ -1,21 +1,38 @@
 "use client"
+
 import styles from "./cart.module.css";
 import {useCart} from "react-use-cart";
 import EmptyCart from "@/app/cart/EmptyCart";
 import {Trash2} from "lucide-react";
+import Loading from "./loading";
+import {useEffect, useState} from "react";
+export default function Page() {
+    const [isMounted, setIsMounted] = useState(false);
 
-export default function Cart() {
+    // assumed (avoids localStorage SSR errors) but not true
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('sq-AL', {
-            style: 'currency',
-            currency: 'Lek', // Change currency as needed
+        return new Intl.NumberFormat("sq-AL", {
+            style: "currency",
+            currency: "Lek", // adjust currency if needed
         }).format(price);
     };
+
     const {
-        isEmpty, totalUniqueItems, items, updateItemQuantity, removeItem, cartTotal} = useCart();
-    if (isEmpty) return <EmptyCart/>;
+        isEmpty,
+        totalUniqueItems,
+        items,
+        updateItemQuantity,
+        removeItem,
+        cartTotal,
+    } = useCart();
+
+    if (!isMounted) return <Loading/>;
+    if (isEmpty) return <EmptyCart />;
     return (
-        <>
             <div className={styles["cart-page"]}>
                 <div className={styles["cart-container"]}>
                     <h1>Shopping Cart</h1>
@@ -92,6 +109,5 @@ export default function Cart() {
                     </div>
                 </div>
             </div>
-        </>
     );
 }

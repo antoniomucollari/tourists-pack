@@ -1,5 +1,3 @@
-"use client";
-
 import {useCart} from "react-use-cart";
 
 interface PackCardProps {

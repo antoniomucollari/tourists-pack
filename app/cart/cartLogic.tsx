@@ -1,6 +1,3 @@
-"use client"
-
-
 import { CartProvider, useCart } from "react-use-cart";
 
 export default function CartLogic() {

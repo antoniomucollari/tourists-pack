@@ -100,7 +100,7 @@ export default function Carousel(){
                     </div>
                 </div>
 
-                {/* Next Button - now with disabled state */}
+                {/* Next Button with disabled state */}
                 <button aria-label="Next" onClick={goToNext} className="carousel-button next" disabled={currentIndex === maxIndex}>
                     <ChevronRight size={24} strokeWidth={1} />
                 </button>

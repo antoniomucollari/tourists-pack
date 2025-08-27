@@ -1,14 +1,6 @@
-export default async function SearchString({ params }: UserPageProps) {
-    const { search } = await params; // await params before using
-    return (
-        <>
-            {decodeURIComponent(search)}
-        </>
-    );
-}
-
-interface UserPageProps {
-    params: Promise<{
-        search: string;
-    }>;
+'use client'
+import { useRouter } from "next/router";
+export default function SearchPage() {
+    const { query } = useRouter();
+    return <h1>Results for: {decodeURIComponent(query.searchstring as string)}</h1>;
 }

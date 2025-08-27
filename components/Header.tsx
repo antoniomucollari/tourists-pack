@@ -1,6 +1,5 @@
 "use client";
 import img from "./../public/assets/logo.webp";
-import { Search } from 'lucide-react';
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";

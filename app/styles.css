@@ -641,3 +641,8 @@ text-align: start;
   color: #65676b;
   outline: none;
 }
+
+.map-container{
+  margin: 5rem auto;
+  z-index: 1;
+}

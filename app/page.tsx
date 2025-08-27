@@ -1,6 +1,8 @@
 import { ActivationStep } from "@/components/ActivationStep";
 import Accordion from "@/components/Accordion/Accordion";
 import Carousel from "@/components/Carousel";
+import Map from "@/components/Map/Map";
+import Coordinate from "@/components/Map/coordinate.model";
 
 const activationSteps = [
   {
@@ -41,8 +43,20 @@ const faqData = [
     description: 'Yes, you can use the Tourist Pack in the Western Balkans region without any extra cost or need to purchase a Roaming Bundle, as it offers all capabilities seamlessly across the area. For more information on the details of Roaming in the Western Balkans, please refer to: Roaming in Western Balkans | Vodafone'
   }
 ];
+const locations = [
+  { lat: 41.323933070770984, lng: 19.776707176223635, storeName: "Vodafone Yzberisht" },
+  { lat: 41.31451571661562, lng: 19.76855470712155,storeName: "Vodafone Kombinat" },
+  { lat: 41.339030547942, lng: 19.790678501288255, storeName: "Vodafone Blloku" },
+  { lat: 41.32547697651594, lng: 19.803362835011733, storeName: "Vodafone 21 Dhjetori" }
+];
 
 export default function HomePage() {
+  function transformCoordinates():Coordinate[]{
+    return locations!.map(t=>{
+      const coordinate: Coordinate = {lat: t.lat, lng: t.lng, message: t.storeName};
+      return coordinate;
+    })
+  }
   return (
     <div className="page">
       <img src="https://home.vodafone.al/tourist/_next/static/media/Desktop_EN.92db70a3.jpeg" alt="banner-img"/>
@@ -69,6 +83,10 @@ export default function HomePage() {
               img={step.img}
             />
           ))}
+        </div>
+        <div className="map-container">
+          <h2 className="section-title">Or you can come at one of our stores:</h2>
+          <Map notAllowClicks={true} coordinates={transformCoordinates()}></Map>
         </div>
         <div className="faq-container">
           <h1 className="section-title">Frequently Asked <span className="color-red">Questions</span></h1>
