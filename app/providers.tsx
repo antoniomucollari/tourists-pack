@@ -1,13 +1,14 @@
 
 "use client";
 
-import { CartProvider } from "react-use-cart";
-import {AuthProvider} from "@/app/context/AuthContext";
+    import { CartProvider } from "react-use-cart";
+import {AuthProvider} from "@/context/AuthContext";
+import {ReactNode} from "react";
 
-export function Providers({ children }: { children: React.ReactNode }) {
-    return (
-        <AuthProvider>
-            <CartProvider>{children}</CartProvider>
-        </AuthProvider>
-    );
-}
+    export function Providers({ children }: { children: ReactNode }) {
+        return (
+            <AuthProvider>
+                <CartProvider>{children}</CartProvider>
+            </AuthProvider>
+        );
+    }

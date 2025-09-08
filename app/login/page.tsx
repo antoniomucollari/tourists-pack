@@ -1,81 +1,126 @@
-// app/login/page.tsx
-"use client";
+// file: app/login/page.tsx
+'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext'; // Adjust the import path if needed
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter(); // Initialize the router
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null); // Clear previous errors
+    const router = useRouter();
+    const { login } = useAuth();
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsLoading(true);
+        setError(null);
 
         try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
 
-            const data = await res.json();
+            const data = await response.json(); // ✅ read once
 
-            if (!res.ok) {
-                setError(data.message || 'Failed to login.');
-                return;
+            if (!response.ok) {
+                // Backend returned an error
+                throw new Error(data.message || "Failed to login");
             }
 
-            // Login successful!
-            // In a real app, you'd save the token (e.g., in context or cookies)
-            console.log('Login successful:', data);
+            // If login is successful
+            // data should contain your user object
+            login();
 
-            // Redirect to a dashboard or home page
-            router.push('/dashboard');
-
-        } catch (err) {
-            setError('An unexpected error occurred.');
-            console.error(err);
+            router.push("/dashboard");
+        } catch (err: any) {
+            setError(err.message || "Something went wrong. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-gray-100">
-            <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-                <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
-                    Login to Your Account
-                </h1>
-                <form onSubmit={handleSubmit}>
-                    {/* Form fields remain the same */}
-                    <div className="mb-4">
-                        <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                            className="block w-full rounded-md border-gray-300 shadow-sm p-3"
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">Password</label>
-                        <input
-                            type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-                            className="block w-full rounded-md border-gray-300 shadow-sm p-3"
-                        />
-                    </div>
-                    {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-                    <button type="submit" className="w-full rounded-md bg-indigo-600 py-3 text-sm font-semibold text-white">
-                        Sign In
-                    </button>
-                </form>
-                <p className="mt-6 text-center text-sm text-gray-600">
-                    Don't have an account?{' '}
-                    <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">Sign up</Link>
-                </p>
-            </div>
-        </main>
+        <div style={styles.container}>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <h2>Login</h2>
+                {error && <p style={styles.error}>{error}</p>}
+                <div style={styles.inputGroup}>
+                    <label htmlFor="email">Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        style={styles.input}
+                    />
+                </div>
+                <div style={styles.inputGroup}>
+                    <label htmlFor="password">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        style={styles.input}
+                    />
+                </div>
+                <button type="submit" style={styles.button} disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
+                </button>
+            </form>
+        </div>
     );
 }
+
+// Basic styling for the form
+const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#f0f2f5',
+    },
+    form: {
+        padding: '40px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        width: '350px',
+    },
+    inputGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '5px',
+    },
+    input: {
+        padding: '10px',
+        borderRadius: '4px',
+        border: '1px solid #ccc',
+        fontSize: '1rem',
+    },
+    button: {
+        padding: '10px 15px',
+        border: 'none',
+        borderRadius: '4px',
+        backgroundColor: '#0070f3',
+        color: 'white',
+        fontSize: '1rem',
+        cursor: 'pointer',
+    },
+    error: {
+        color: 'red',
+        textAlign: 'center',
+    }
+};

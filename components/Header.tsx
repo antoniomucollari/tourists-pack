@@ -16,12 +16,14 @@ import SearchBar from "@/components/Search/SearchBar";
 
 
 import {User} from "lucide-react";
+import {useAuth} from "@/context/AuthContext";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isEmpty, totalUniqueItems } = useCart();
   const [isClient, setIsClient] = useState(false);
-
+  const { user, logout } = useAuth();
+  const isAdmin = user?.roles.includes("ADMIN");
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -61,16 +63,41 @@ export default function Header() {
           {/* Header Buttons */}
           <div className="header-buttons">
             <SearchBar />
-
+            {isAdmin && (
+                <Link href="/dashboard" className="hover:text-gray-300 transition">
+                  Dashboard
+                </Link>
+            )}
             {/* START: Login Button */}
-            <Link
-                href="/login"
-                className="bg-gray-800 text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-700 transition-colors"
-            >
-              {/* Person Icon SVG */}
-              <User />
-              <span>Login</span>
-            </Link>
+            <div>
+              {user ? (
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm">Hello, {user.name}</span>
+                    <button
+                        onClick={logout}
+                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition"
+                    >
+                      Logout
+                    </button>
+                  </div>
+              ) : (
+                  <Link
+                      href="/login"
+                      className="
+                  inline-flex items-center gap-2
+                  rounded-full bg-red-600 px-5 py-2.5
+                  text-sm font-medium text-white
+                  shadow-sm transition-all duration-200
+                  hover:bg-red-800
+                  focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2
+                  active:scale-95">
+
+                    <User className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+              )}
+            </div>
+
             {/* END: Login Button */}
 
             <div className="cart-icon-container">
