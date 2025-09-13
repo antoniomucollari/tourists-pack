@@ -1,7 +1,7 @@
-import {useCart} from "react-use-cart";
+import { useHybridCart } from "@/hooks/useHybridCart";
 
 interface PackCardProps {
-  id: string    ;
+  id: string;
   title: string;
   subtitle: string;
   price: number;
@@ -11,9 +11,9 @@ interface PackCardProps {
 
 export default function PackCard(product: PackCardProps) {
 
-    const { addItem } = useCart();
+    const { addItem } = useHybridCart();
 
-  return (
+    return (
     <div className="pack-card">
       <div className="pack-header">
         <h3 className="pack-title">{product.title}</h3>

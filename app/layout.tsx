@@ -1,10 +1,10 @@
 import type React from "react";
 import "./global.css";
-import Header from "@/components/Header";
+import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer";
 import {Providers} from "@/app/providers";
 import type { Metadata } from 'next';
-
+import 'nprogress/nprogress.css';
 export const metadata: Metadata = {
   title: 'Vodafone Albania Tourist Pack',
   description: 'Stay connected during your visit to Albania with Vodafone special tourist packages. Choose the perfect plan for your needs.',
@@ -56,14 +56,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-            <Header />
-            {children}
-        </Providers>
-        <Footer />
+      <html lang="en">
+      <body className="flex flex-col min-h-screen">
+      <Providers>
+        <Header />
+        {/* This main tag will grow to fill available space, pushing the footer down */}
+        <main className="grow">
+          {children}
+        </main>
+      </Providers>
+      <Footer />
       </body>
-    </html>
+      </html>
   );
 }

@@ -18,7 +18,7 @@ export default function DashboardPage() {
                     <h2 className="text-2xl font-semibold text-gray-700 mb-4">Welcome!</h2>
                     <p><strong>Name:</strong> {user.name}</p>
                     <p><strong>Email:</strong> {user.email}</p>
-                    <p><strong>Your Role(s):</strong> {user.roles.map(r => r.name).join(", ")}</p>
+                    <p><strong>Your Role(s):</strong> {user.roles.map(obj => obj + " ")}</p>
                 </div>
             </main>
         </div>

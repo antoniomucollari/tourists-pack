@@ -1,8 +1,8 @@
-// file: middleware.ts
+// file: middleware.ts purpose-> protecting pages on the server before they are rendered
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = ['/userSettings'];
+const protectedRoutes = ['/userSettings', '/orders'];
 const adminRoutes = ['/dashboard'];
 
 

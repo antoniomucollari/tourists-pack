@@ -1,6 +1,6 @@
 "use client";
 
-import img from "./../public/assets/logo.webp";
+import img from "../../public/assets/logo.webp";
 
 import {useEffect, useState} from "react";
 
@@ -10,24 +10,23 @@ import Link from "next/link";
 
 import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
 
-import {useCart} from "react-use-cart";
+import { useHybridCart } from "@/hooks/useHybridCart";
 
 import SearchBar from "@/components/Search/SearchBar";
 
-
-import {User} from "lucide-react";
-import {useAuth} from "@/context/AuthContext";
+import AuthButtons from "@/components/Header/AuthButtons";
+import {usePathname} from "next/navigation";
 
 export default function Header() {
+    const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isEmpty, totalUniqueItems } = useCart();
+  const { isEmpty, totalUniqueItems } = useHybridCart();
   const [isClient, setIsClient] = useState(false);
-  const { user, logout } = useAuth();
-  const isAdmin = user?.roles.includes("ADMIN");
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+    if (pathname?.startsWith("/login") || pathname.startsWith("/register")) return null;
   const menuItems = [
     { name: "Mobile", href: "/" },
     { name: "Fits & TV", href: "/fits-tv" },
@@ -63,40 +62,8 @@ export default function Header() {
           {/* Header Buttons */}
           <div className="header-buttons">
             <SearchBar />
-            {isAdmin && (
-                <Link href="/dashboard" className="hover:text-gray-300 transition">
-                  Dashboard
-                </Link>
-            )}
-            {/* START: Login Button */}
-            <div>
-              {user ? (
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm">Hello, {user.name}</span>
-                    <button
-                        onClick={logout}
-                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition"
-                    >
-                      Logout
-                    </button>
-                  </div>
-              ) : (
-                  <Link
-                      href="/login"
-                      className="
-                  inline-flex items-center gap-2
-                  rounded-full bg-red-600 px-5 py-2.5
-                  text-sm font-medium text-white
-                  shadow-sm transition-all duration-200
-                  hover:bg-red-800
-                  focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2
-                  active:scale-95">
 
-                    <User className="h-4 w-4" />
-                    <span>Login</span>
-                  </Link>
-              )}
-            </div>
+           <AuthButtons/>
 
             {/* END: Login Button */}
 
@@ -110,8 +77,8 @@ export default function Header() {
             </div>
             <button
                 className="mobile-menu-button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+
               ☰
             </button>
           </div>
