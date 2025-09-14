@@ -7,17 +7,15 @@ import Packet from "@/domain/Packet";
 interface Props {
     items: Packet[];
     isLoading: boolean;
-    isMounted: boolean;
     updateItemQuantity: (id: number, quantity: number) => void;
     removeItem: (id: number) => void;
+    authLoading: boolean;
 }
 
 export default function CartItems({
               items,
-              isLoading,
-              isMounted,
-              updateItemQuantity,
-              removeItem,}: Props) {
+              isLoading, updateItemQuantity,
+              removeItem,authLoading}: Props) {
     return (
         <>
             <div className="flex justify-between items-center mb-6">
@@ -32,7 +30,7 @@ export default function CartItems({
             </div>
             <div className="bg-white rounded-lg shadow-md">
                 <div className="divide-y divide-gray-200">
-                    {isLoading || !isMounted ? (
+                    {isLoading || authLoading ?  (
                         <div className="p-6">
                             <CartItemSkeleton />
                             <CartItemSkeleton />

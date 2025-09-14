@@ -21,6 +21,7 @@ export default function Header() {
     const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isEmpty, totalUniqueItems } = useHybridCart();
+  console.log(totalUniqueItems);
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);

@@ -2,9 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import User from "@/domain/User";
-import ApiResponse from "@/response/ApiResponse";
 import { useRouter } from 'next/navigation';
-import {Property} from "csstype";
 import Order from "@/domain/Order";
 import { X } from 'lucide-react';
 

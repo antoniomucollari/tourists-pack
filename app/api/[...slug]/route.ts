@@ -7,7 +7,7 @@ const BACKEND_URL = process.env.SPRING_API_URL;
 async function handler(req: NextRequest, { params }: { params: { slug: string[] } }) {
     const token = (await cookies()).get("token")?.value;
 
-    const path = ((params).slug ?? []).join('/');
+    const path = ((await params).slug ?? []).join('/');
 
     // Forward query parameters
     const query = req.nextUrl.search; // includes '?' if present
@@ -37,7 +37,6 @@ async function handler(req: NextRequest, { params }: { params: { slug: string[] 
             body,
         });
 
-        // try parse JSON, fallback to text
         let data: any;
         const text = await response.text();
         try {

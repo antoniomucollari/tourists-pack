@@ -4,41 +4,34 @@ import { useCart as useLocalCart, Item } from "react-use-cart";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState, useMemo } from "react";
 import Packet from "@/domain/Packet";
+import OrderItem from "@/domain/OrderItem";
 
-export interface BackendCartItem {
-    id: string;
-    packet: Packet;
-    quantity: number;
-    subTotal: number;
-}
 export function useHybridCart() {
-    // --- 1. Call ALL hooks unconditionally at the top ---
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated,isLoading } = useAuth();
     const localCart = useLocalCart();
-    const [backendItems, setBackendItems] = useState<BackendCartItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // --- 2. Define all functions and logic ---
+    const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+    const [isLoadingState, setIsLoadingState] = useState(true);
+    // console.log(orderItems, "orderItems");
+    // Define all functions and logic ---
     const fetchBackendCart = async () => {
-        // Make sure we don't fetch if there is a token
+
         if (!isAuthenticated ) {
-            setIsLoading(false);
+            setIsLoadingState(false);
             return;
         }
-        setIsLoading(true);
-
-        // Set loading to true only when we are about to fetch
+        setIsLoadingState(true);
+        
         try {
             const response = await fetch("/api/cart/items");
             if (response.ok) {
                 const result = await response.json();
-                setBackendItems(result.data.cartItems || []);
-                setIsLoading(false);
+                setOrderItems(result.data.cartItems || []);
+                setIsLoadingState(false);
             }
         } catch (error) {
             console.error("Failed to fetch backend cart:", error);
         } finally {
-            setIsLoading(false);
+            setIsLoadingState(false);
         }
     };
 
@@ -61,7 +54,7 @@ export function useHybridCart() {
                 // After merge, clear local cart
                 localCart.emptyCart();
                 await fetchBackendCart();
-                setIsLoading(false);
+                setIsLoadingState(false);
 
 
                 // Refresh backend cart
@@ -72,7 +65,7 @@ export function useHybridCart() {
     };
     useEffect(() => {
         if (isAuthenticated) {
-            mergeLocalCartToBackend();
+           mergeLocalCartToBackend();
         }
         fetchBackendCart();
     }, [isAuthenticated]);// Re-fetch whenever the isAuthenticated logs in or out
@@ -101,13 +94,12 @@ export function useHybridCart() {
 
     const updateItemQuantity = async (packetId: number, newQuantity: number) => {
         if (isAuthenticated) {
-            const item = backendItems.find(i => Number(i.packet.id) === packetId);
+            const item = orderItems.find(i => Number(i.packet.id) === packetId);
             if (!item) return;
 
             if (newQuantity > item.quantity) {
                 await fetch(`/api/cart/items/increment/${packetId}`, { method: 'POST' });
             } else if (newQuantity < item.quantity && newQuantity > 0) {
-                await fetch(`/api/cart/items/decrement/${packetId}`, { method: 'POST' });
             } else if (newQuantity <= 0) {
                 await removeItem(Number(item.id));
                 return;
@@ -117,24 +109,23 @@ export function useHybridCart() {
             localCart.updateItemQuantity(packetId.toString(), newQuantity);
         }
     };
-    // For logged-in users, return the derived values from the backend state
     const adaptedItems: Packet[] = useMemo(() =>
-        backendItems.map(item => ({
+        orderItems.map(item => ({
             ...item.packet,
             id: item.packet.id,
             cartId: item.id,
             quantity: item.quantity,
             itemTotal: item.subTotal,
-        })), [backendItems]);
+        })), [orderItems]);
 
     const cartTotal = useMemo(() =>
-            backendItems.reduce((total, item) => total + item.subTotal, 0),
-        [backendItems]);
+            orderItems.reduce((total, item) => total + item.subTotal, 0),
+        [orderItems]);
     // --- 3. Use the 'if' condition to decide what to RETURN ---
     if (!isAuthenticated) {
         return {
             ...localCart,
-            isLoading,
+            isLoading: isLoadingState,
             addItem,
             removeItem,
             updateItemQuantity
@@ -142,14 +133,14 @@ export function useHybridCart() {
     }
 
     return {
-        isLoading,
+        isLoading: isLoadingState,
         addItem,
         removeItem,
         updateItemQuantity,
         items: adaptedItems,
-        isEmpty: backendItems.length === 0,
-        totalUniqueItems: backendItems.length,
-        totalItems: backendItems.reduce((sum, item) => sum + item.quantity, 0),
+        isEmpty: orderItems.length === 0,
+        totalUniqueItems: orderItems.length,
+        totalItems: orderItems.reduce((sum, item) => sum + item.quantity, 0),
         cartTotal,
     };
 }

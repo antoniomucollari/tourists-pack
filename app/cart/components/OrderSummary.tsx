@@ -3,11 +3,11 @@ import { ShieldCheck } from "lucide-react";
 
 interface Props {
     isLoading: boolean;
-    isMounted: boolean;
     cartTotal: number;
     isCheckoutLoading: boolean;
     handleCheckout: () => void;
     error: string | null;
+    authLoading: boolean;
 }
 
 const formatPrice = (price: number) =>
@@ -17,14 +17,13 @@ const formatPrice = (price: number) =>
     }).format(price);
 
 export default function OrderSummary({
-                                         isLoading,
-                                         isMounted,
-                                         cartTotal,
-                                         isCheckoutLoading,
-                                         handleCheckout,
-                                         error,
-                                     }: Props) {
-    if (isLoading || !isMounted) return <OrderSummarySkeleton />;
+                                 isLoading, cartTotal,
+                                 isCheckoutLoading,
+                                 handleCheckout,
+                                 error,authLoading
+
+                             }: Props) {
+    if (isLoading|| authLoading) return <OrderSummarySkeleton />;
 
     return (
         <div className="bg-white rounded-lg shadow-md p-8 sticky top-8">
@@ -50,7 +49,7 @@ export default function OrderSummary({
                 disabled={isCheckoutLoading}
                 className="w-full mt-8 bg-red-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-red-700 transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300 text-lg flex items-center justify-center disabled:bg-red-400 disabled:scale-100"
             >
-                {isCheckoutLoading ? (
+                {isCheckoutLoading  ? (
                     <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                         <span>Processing...</span>

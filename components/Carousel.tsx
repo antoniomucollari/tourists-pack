@@ -84,7 +84,7 @@ export default function Carousel() {
         const fetchPacks = async () => {
             try {
                 // Simulate a network delay to see the skeleton
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                await new Promise(resolve => setTimeout(resolve));
 
                 const response = await fetch('/api/packet');
 

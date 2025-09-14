@@ -3,18 +3,17 @@ import EmptyCart from "@/app/cart/EmptyCart";
 import { useHybridCart } from "@/hooks/useHybridCart";
 import CartItems from "@/app/cart/components/CartItems";
 import OrderSummary from "@/app/cart/components/OrderSummary";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import {useRouter} from "next/navigation";
+import {useAuth} from "@/context/AuthContext";
 
 export default function CartPage() {
-    const [isMounted, setIsMounted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
     const router = useRouter();
     const { isLoading, isEmpty, items, updateItemQuantity, removeItem, cartTotal } =
         useHybridCart();
-
-    useEffect(() => setIsMounted(true), []);
+    const { isLoading: authLoading } = useAuth();
 
     const handleCheckout = async () => {
         setError(null);
@@ -43,7 +42,7 @@ export default function CartPage() {
         }
     };
 
-    if (!isLoading && isEmpty) return <EmptyCart />;
+    if (!isLoading && isEmpty && !authLoading) return <EmptyCart />;
 
     return (
         <div className="bg-gray-100 min-h-screen font-sans">
@@ -53,7 +52,7 @@ export default function CartPage() {
                         <CartItems
                             items={items}
                             isLoading={isLoading}
-                            isMounted={isMounted}
+                            authLoading={authLoading}
                             updateItemQuantity={updateItemQuantity}
                             removeItem={removeItem}
                         />
@@ -61,8 +60,8 @@ export default function CartPage() {
                     <div className="lg:col-span-1">
                         <OrderSummary
                             isLoading={isLoading}
-                            isMounted={isMounted}
                             cartTotal={cartTotal}
+                            authLoading={authLoading}
                             isCheckoutLoading={isCheckoutLoading}
                             handleCheckout={handleCheckout}
                             error={error}
