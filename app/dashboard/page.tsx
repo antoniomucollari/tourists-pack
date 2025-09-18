@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function DashboardPage() {
     const { user } = useAuth();
@@ -19,6 +20,7 @@ export default function DashboardPage() {
                     <p><strong>Name:</strong> {user.name}</p>
                     <p><strong>Email:</strong> {user.email}</p>
                     <p><strong>Your Role(s):</strong> {user.roles.map(obj => obj + " ")}</p>
+                    <Link href="/samplePage">Go to sample Link</Link>
                 </div>
             </main>
         </div>

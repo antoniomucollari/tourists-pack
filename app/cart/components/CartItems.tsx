@@ -2,10 +2,10 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { CartItemSkeleton } from "@/app/cart/skeleton";
 import CartItem from "./CartItem";
-import Packet from "@/domain/Packet";
+import Product from "@/domain/Product";
 
 interface Props {
-    items: Packet[];
+    items: Product[];
     isLoading: boolean;
     updateItemQuantity: (id: number, quantity: number) => void;
     removeItem: (id: number) => void;
@@ -37,7 +37,7 @@ export default function CartItems({
                             <CartItemSkeleton />
                         </div>
                     ) : (
-                        items.map((item) => (
+                        items.map((item:Product) => (
                             <CartItem
                                 key={item.id}
                                 item={item}

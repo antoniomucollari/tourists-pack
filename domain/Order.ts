@@ -1,4 +1,4 @@
-import OrderItem from "@/domain/OrderItem";
+import CartItem from "@/domain/CartItemInterface ";
 
 export default interface Order {
     id: number;
@@ -6,7 +6,7 @@ export default interface Order {
     totalAmount: number;
     orderStatus: string;
     paymentStatus: string;
-    orderItems: OrderItem[];
+    orderItems: CartItem[];
     paymentUrl?: string;
     paymentGatewayOrderId?: string;
 }

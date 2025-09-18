@@ -94,11 +94,11 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                         {order.orderItems?.map(item => (
                             <li key={item.id} className="flex justify-between items-center">
                                 <div>
-                                    <p className="font-medium">{item.packet.name}</p>
+                                    <p className="font-medium">{item.product.name}</p>
                                     <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                                 </div>
                                 <p className="text-gray-700">
-                                    {item.packet.price * item.quantity} ALL
+                                    {item.product.price * item.quantity} ALL
                                 </p>
                             </li>
                         ))}

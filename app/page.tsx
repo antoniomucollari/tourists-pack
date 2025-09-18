@@ -1,6 +1,6 @@
 import { ActivationStep } from "@/components/ActivationStep";
 import Accordion from "@/components/Accordion/Accordion";
-import Carousel from "@/components/Carousel";
+import Carousel from "@/components/DisplayingPackets/Carousel";
 import Map from "@/components/Map/Map";
 import Coordinate from "@/components/Map/coordinate.model";
 
@@ -50,7 +50,7 @@ const locations = [
   { lat: 41.32547697651594, lng: 19.803362835011733, storeName: "Vodafone 21 Dhjetori" }
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
   function transformCoordinates():Coordinate[]{
     return locations!.map(t=>{
       const coordinate: Coordinate = {lat: t.lat, lng: t.lng, message: t.storeName};
@@ -94,8 +94,7 @@ export default function HomePage() {
               <Accordion
                   key={item.id}
                   title={item.title}
-                  description={item.description}
-              />
+                  description={item.description}/>
           ))}
         </div>
       </main>

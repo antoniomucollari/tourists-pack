@@ -1,4 +1,4 @@
-// File Path: app/orders/OrderItem.tsx
+// File Path: app/orders/CartItemInterface.tsx
 'use client';
 
 // --- COLOR HELPER FUNCTION ---

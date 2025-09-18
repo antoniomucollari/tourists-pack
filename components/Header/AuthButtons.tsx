@@ -15,9 +15,7 @@ export default function AuthButtons() {
     return (
 
         <div ref={parent} className="flex h-10 items-center justify-center">
-            {isLoading ? (
-                <SkeletonAuthButton/>
-            ) : user?.lastOrder? (
+            {isLoading ? (<SkeletonAuthButton/>) : user? (
                 <div className="relative ">
                     <div
                         className="relative"

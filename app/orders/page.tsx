@@ -6,25 +6,11 @@ import axios from "axios";
 import OrderDTO from "@/domain/OrderDTO";
 import { OrderStatus } from "@/domain/OrderStatus";
 import OrderList from "@/app/orders/OrderList";
+import {useAuth} from "@/context/AuthContext";
+import {SkeletonOrderItem} from "@/app/orders/OrderItemSkeleton";
 
-const useAuth = () => {
-    return { isAuthenticated: true, isCustomer: true, isLoading: false };
-};
-// ------------------
 const statusOptions: OrderStatus[] = ["PENDING", "COMPLETED", "CANCELLED", "EXPIRED"];
-// --- RE-INTEGRATED COMPONENTS ---
-// To fix the resolution error, the separated components are now included directly in this file.
 
-const SkeletonOrderItem = () => (
-    <li className="rounded-xl p-4 shadow-sm animate-pulse">
-        <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="space-y-2 flex-grow"><div className="h-5 bg-gray-200 rounded w-3/5"></div><div className="h-4 bg-gray-200 rounded w-1/2"></div><div className="h-4 bg-gray-200 rounded w-1/4 mt-1"></div></div>
-            <div className="flex flex-col items-start md:items-end gap-2"><div className="h-6 bg-gray-200 rounded-full w-24"></div><div className="h-6 bg-gray-200 rounded-full w-28"></div><div className="h-8 bg-gray-200 rounded-lg w-20 mt-2"></div></div>
-        </div>
-    </li>
-);
-
-// --- MAIN PAGE COMPONENT ---
 export default function Page() {
     const { isAuthenticated, isCustomer, isLoading: isAuthLoading } = useAuth();
     const [orders, setOrders] = useState<OrderDTO[]>([]);
@@ -47,7 +33,7 @@ export default function Page() {
 
     const fetchOrders = async (status: "ALL" | OrderStatus) => {
         setIsLoading(true);
-        let apiUrl = "/api/orders/me"; // Using relative path for proxy
+        let apiUrl = "/api/orders/me";
         if (status !== "ALL") {
             apiUrl += `?status=${status}`;
         }

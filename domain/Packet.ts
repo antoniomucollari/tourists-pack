@@ -1,12 +1,6 @@
+// This interface now ONLY contains fields specific to a packet.
 export default interface Packet {
-    id: string;
-    cartId: string;
-    quantity: number;
-    itemTotal: number;
-    name: string;
-    subtitle: string;
-    price: number;
     duration: number;
+    isPopular: boolean;
     features: string[];
-    popular: boolean;
 }

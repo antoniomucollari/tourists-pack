@@ -64,8 +64,7 @@ export default function CartPage() {
                             authLoading={authLoading}
                             isCheckoutLoading={isCheckoutLoading}
                             handleCheckout={handleCheckout}
-                            error={error}
-                        />
+                            error={error}/>
                     </div>
                 </div>
             </div>

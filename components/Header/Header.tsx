@@ -31,7 +31,7 @@ export default function Header() {
   const menuItems = [
     { name: "Mobile", href: "/" },
     { name: "Fits & TV", href: "/fits-tv" },
-    { name: "eShop", href: "/eshop" },
+    { name: "eShop", href: "/e-shop" },
     { name: "Tourist Pack", href: "/tourist-pack" },
     { name: "Support", href: "/support" },
   ];
