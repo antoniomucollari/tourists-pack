@@ -1,102 +1,125 @@
 "use client";
 
 import img from "../../public/assets/logo.webp";
-
-import {useEffect, useState} from "react";
-
+import { useEffect, useState, useRef } from "react"; // <-- Import useRef
 import Image from "next/image";
-
 import Link from "next/link";
-
 import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
-
 import { useHybridCart } from "@/hooks/useHybridCart";
-
 import SearchBar from "@/components/Search/SearchBar";
-
 import AuthButtons from "@/components/Header/AuthButtons";
-import {usePathname} from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
     const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isEmpty, totalUniqueItems } = useHybridCart();
-  console.log(totalUniqueItems);
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { isEmpty, totalUniqueItems } = useHybridCart();
+    const [isClient, setIsClient] = useState(false);
 
-    if (pathname?.startsWith("/login") || pathname.startsWith("/register")) return null;
-  const menuItems = [
-    { name: "Mobile", href: "/" },
-    { name: "Fits & TV", href: "/fits-tv" },
-    { name: "eShop", href: "/e-shop" },
-    { name: "Tourist Pack", href: "/tourist-pack" },
-    { name: "Support", href: "/support" },
-  ];
+    // --- ANIMATION LOGIC START ---
+    const [isAnimating, setIsAnimating] = useState(false);
+    const prevTotalItems = useRef(totalUniqueItems);
 
-  return (
-      <header className="header">
-        <div className="header-content">
-          {/* Logo */}
-          <Link href="/" passHref>
-            <Image
-                src={img}
-                alt="vodafone logo"
-                width={50}
-                height={50}
-                style={{ objectFit: "contain", cursor: "pointer" }}
-            />
-          </Link>
+    useEffect(() => {
+        // Only trigger animation if the number of items has increased
+        if (totalUniqueItems > prevTotalItems.current) {
+            setIsAnimating(true);
 
-          {/* Desktop Navigation */}
-          <nav className="nav">
-            {menuItems.map((item) => (
-                // Using a Link for navigation is better practice
-                <Link key={item.name} href={item.href} className="nav-link">
-                  {item.name}
+            // Remove the animation class after the animation duration (500ms)
+            const timer = setTimeout(() => {
+                setIsAnimating(false);
+            }, 500);
+
+            // Cleanup the timer if the component unmounts
+            return () => clearTimeout(timer);
+        }
+
+        // Update the previous items ref for the next render
+        prevTotalItems.current = totalUniqueItems;
+    }, [totalUniqueItems]);
+    // --- ANIMATION LOGIC END ---
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (
+        pathname?.startsWith("/login") ||
+        pathname?.startsWith("/register") ||
+        pathname?.startsWith("/dashboard")
+    ) return null;
+
+    const menuItems = [
+        { name: "Mobile", href: "/" },
+        { name: "Fits & TV", href: "/fits-tv" },
+        { name: "eShop", href: "/e-shop" },
+        { name: "Tourist Pack", href: "/tourist-pack" },
+        { name: "Support", href: "/support" },
+    ];
+
+    return (
+        <header className="header">
+            <div className="header-content">
+                {/* Logo */}
+                <Link href="/" passHref>
+                    <Image
+                        src={img}
+                        alt="vodafone logo"
+                        width={50}
+                        height={50}
+                        style={{ objectFit: "contain", cursor: "pointer" }}
+                    />
                 </Link>
-            ))}
-          </nav>
 
-          {/* Header Buttons */}
-          <div className="header-buttons">
-            <SearchBar />
+                {/* Desktop Navigation */}
+                <nav className="nav">
+                    {menuItems.map((item) => (
+                        <Link key={item.name} href={item.href} className="nav-link">
+                            {item.name}
+                        </Link>
+                    ))}
+                </nav>
 
-           <AuthButtons/>
+                {/* Header Buttons */}
+                <div className="header-buttons">
+                    <SearchBar />
 
-            {/* END: Login Button */}
+                    <AuthButtons />
 
-            <div className="cart-icon-container">
-              <Link href="/cart" className="header-button">
-                <CartIcon width={25} height={25} />
-              </Link>
-              {isClient && !isEmpty && (
-                  <span className="cart-badge">{totalUniqueItems}</span>
-              )}
+                    {/* END: Login Button */}
+
+                    <div className="cart-icon-container">
+                        <Link href="/cart" className="header-button">
+                            <CartIcon width={25} height={25} />
+                        </Link>
+                        {isClient && !isEmpty && (
+                            // --- Apply the animation class conditionally ---
+                            <span className={`cart-badge ${isAnimating ? 'updated' : ''}`}>
+                {totalUniqueItems}
+              </span>
+                        )}
+                    </div>
+                    <button
+                        className="mobile-menu-button"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    >
+                        ☰
+                    </button>
+                </div>
             </div>
-            <button
-                className="mobile-menu-button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
 
-              ☰
-            </button>
-          </div>
-        </div>
-
-        <nav className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
-          {menuItems.map((item) => (
-              <Link
-                  key={item.name}
-                  href={item.href}
-                  className="mobile-nav-link"
-                  onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-          ))}
-        </nav>
-      </header>
-  );
+            <nav className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}>
+                {menuItems.map((item) => (
+                    <Link
+                        key={item.name}
+                        href={item.href}
+                        className="mobile-nav-link"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        {item.name}
+                    </Link>
+                ))}
+            </nav>
+        </header>
+    );
 }

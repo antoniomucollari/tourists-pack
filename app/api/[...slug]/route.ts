@@ -1,58 +1,67 @@
 // file: app/api/[...slug]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import axios, { AxiosError } from "axios";
 
 const BACKEND_URL = process.env.SPRING_API_URL;
 
 async function handler(req: NextRequest, { params }: { params: { slug: string[] } }) {
+    if (!BACKEND_URL) {
+        console.error("SPRING_API_URL is not set in environment variables.");
+        return NextResponse.json(
+            { message: "Backend service URL is not configured." },
+            { status: 500 }
+        );
+    }
+
     const token = (await cookies()).get("token")?.value;
+    const path = params.slug.join('/');
+    const url = `${BACKEND_URL}/${path}${req.nextUrl.search}`;
 
-    const path = ((await params).slug ?? []).join('/');
-
-    // Forward query parameters
-    const query = req.nextUrl.search; // includes '?' if present
-    const url = `${BACKEND_URL}/${path}${query}`; // append query string
-
-    const headers: HeadersInit = {
-        "Content-Type": "application/json",
+    const headers: Record<string, string> = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
     };
 
     if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log(`[API Proxy] Forwarding to ${url} WITH Authorization header.`);
+    } else {
+        console.log(`[API Proxy] Forwarding to ${url} WITHOUT Authorization header.`);
     }
 
-    let body: BodyInit | undefined = undefined;
-    if (req.method !== "GET" && req.method !== "HEAD") {
-        try {
-            body = JSON.stringify(await req.json());
-        } catch {
-            // no body or invalid JSON, ignore
-        }
+    const bodyText = await req.text();
+    let body: any;
+    try {
+        body = bodyText ? JSON.parse(bodyText) : undefined;
+    } catch {
+        body = bodyText;
     }
 
     try {
-        const response = await fetch(url, {
+        const response = await axios({
+            url,
             method: req.method,
             headers,
-            body,
+            data: body,
+            timeout: 10000,
         });
 
-        let data: any;
-        const text = await response.text();
-        try {
-            data = JSON.parse(text);
-        } catch {
-            data = text;
+        return NextResponse.json(response.data, { status: response.status });
+
+    } catch (error) {
+        if (error instanceof AxiosError && error.response) {
+            console.error(`[API Proxy] Error from backend (${error.response.status}):`, error.response.data);
+            return NextResponse.json(error.response.data, { status: error.response.status });
         }
 
-        return NextResponse.json(data, { status: response.status });
-    } catch (error) {
-        console.error("API proxy error:", error);
+        console.error("[API Proxy] Network or unhandled error:", error);
         return NextResponse.json(
-            { message: "An error occurred while proxying the request." },
-            { status: 500 }
+            { message: "Could not connect to the backend service." },
+            { status: 502 }
         );
     }
 }
 
 export { handler as GET, handler as POST, handler as PUT, handler as DELETE };
+

@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
             const apiResponse = await res.json();
             const rawUserData: User = apiResponse.data;
+            setIsAdmin(rawUserData.roles?.some(role => role.name === "ADMIN") ?? false);
             const processedUser = processUserData(rawUserData);
             setUser(processedUser);
 

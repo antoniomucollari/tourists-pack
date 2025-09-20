@@ -615,24 +615,45 @@ text-align: start;
   display: flex;
 }
 
+.cart-icon-container {
+  position: relative;
+}
+
 .cart-badge {
+  /* Basic styling for the badge */
   position: absolute;
   top: -5px;
-  right: -5px;
-
-  /* Appearance */
-  background-color: red;
+  right: -10px;
+  background-color: red; /* Or your brand color */
   color: white;
   border-radius: 50%;
-  font-size: 12px;
-  font-weight: bold;
-
   width: 20px;
   height: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  user-select: none;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  /* Add a transition for smooth scaling */
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Define the animation */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* The class that triggers the animation */
+.cart-badge.updated {
+  animation: pop 0.5s ease-out;
 }
 
 .search-container {
