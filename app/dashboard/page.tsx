@@ -1,52 +1,80 @@
-
+"use client";
+import { useRouter } from "next/navigation";
+import CustomLoader from "@/components/CircularLoader";
+import { useState, useEffect } from "react";
 import { getTotalOrders, getTotalRevenue, getUniqueCustomers } from "@/lib/api";
-import { ShoppingCart, DollarSign, Users, RefreshCw } from "lucide-react";
-import { Suspense } from "react";
+import { ShoppingCart, DollarSign, Users, RefreshCw, ArrowLeft } from "lucide-react";
 import { StatCard } from "./StatCard";
 import { RevenueChart } from "./RevenueChart";
-import {StatusDistributionChart} from "@/app/dashboard/StatusDistributionChart";
-import {RecentOrdersTable} from "@/app/dashboard/RecentOrdersTable";
-import {PopularItemsTable} from "@/app/dashboard/PopularItemsTable";
-
-async function Stats() {
-    const [totalOrders, totalRevenue, uniqueCustomers] = await Promise.all([
-        getTotalOrders(),
-        getTotalRevenue(),
-        getUniqueCustomers(),
-    ]);
-
-    return (
-        <>
-            <StatCard
-                title="Total Orders"
-                value={totalOrders}
-                subtitle="All time"
-                Icon={ShoppingCart}
-            />
-            <StatCard
-                title="Total Revenue"
-                value={`ALL ${totalRevenue.toLocaleString()}`}
-                subtitle="All time"
-                Icon={DollarSign}
-            />
-            <StatCard
-                title="Active Customers"
-                value={uniqueCustomers}
-                subtitle="Recently ordered"
-                Icon={Users}
-            />
-        </>
-    );
-}
+import { StatusDistributionChart } from "@/app/dashboard/StatusDistributionChart";
+import { RecentOrdersTable } from "@/app/dashboard/RecentOrdersTable";
+import { PopularItemsTable } from "@/app/dashboard/PopularItemsTable";
 
 export default function DashboardPage() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [refreshCounter, setRefreshCounter] = useState(0);
+
+
+    const [totalOrders, setTotalOrders] = useState<number | null>(null);
+    const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
+    const [uniqueCustomers, setUniqueCustomers] = useState<number | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+
+        async function fetchStats() {
+            setLoading(true);
+            setError(null);
+            try {
+                const [orders, revenue, customers] = await Promise.all([
+                    getTotalOrders(),
+                    getTotalRevenue(),
+                    getUniqueCustomers(),
+                ]);
+                if (!mounted) return;
+
+                setTotalOrders(orders);
+                setTotalRevenue(revenue);
+                setUniqueCustomers(customers);
+                setLoading(false);
+            } catch (err: any) {
+                if (!mounted) return;
+                setError(err.message || "Failed to fetch stats");
+                setLoading(false);
+            }
+        }
+
+        fetchStats();
+
+        return () => {
+            mounted = false;
+        };
+    }, [refreshCounter]); // re-run whenever refreshCounter changes
+
+    if (loading) return <CustomLoader />;
+    if (error) return <div className="text-center text-red-500 col-span-3">{error}</div>;
+
     return (
         <div className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
             <main className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
-                    <button className="bg-red-500 flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <div className="flex gap-2">
+                        <button
+                            className=" cursor-pointer bg-gray-300 flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-400"
+                            onClick={() => router.push("/")}
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            <span>Back</span>
+                        </button>
+                        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+                    </div>
+                    <button
+                        className="cursor-pointer bg-red-500 flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+                        onClick={() => setRefreshCounter((prev) => prev + 1)} // triggers useEffect
+                    >
                         <RefreshCw className="h-4 w-4" />
                         <span>Refresh Data</span>
                     </button>
@@ -54,9 +82,14 @@ export default function DashboardPage() {
 
                 {/* Stat Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <Suspense fallback={<div className="text-center col-span-3">Loading stats...</div>}>
-                        <Stats />
-                    </Suspense>
+                    <StatCard title="Total Orders" value={totalOrders} subtitle="All time" Icon={ShoppingCart} />
+                    <StatCard
+                        title="Total Revenue"
+                        value={`ALL ${Number(totalRevenue).toLocaleString()}`}
+                        subtitle="All time"
+                        Icon={DollarSign}
+                    />
+                    <StatCard title="Active Customers" value={uniqueCustomers} subtitle="Recently ordered" Icon={Users} />
                 </div>
 
                 {/* Charts Grid */}

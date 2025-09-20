@@ -15,7 +15,7 @@ export function PopularItemsTable() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <div className="text-center py-4 text-gray-500">Loading popular items...</div>;
+    if (loading) return <><TableSkeleton/></>;
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -36,6 +36,23 @@ export function PopularItemsTable() {
                 ))}
                 </tbody>
             </table>
+        </div>
+    );
+}
+function TableSkeleton() {
+    return (
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex justify-between items-center">
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/6"></div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

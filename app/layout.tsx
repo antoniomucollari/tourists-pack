@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import {Providers} from "@/app/providers";
 import type { Metadata } from 'next';
 import 'nprogress/nprogress.css';
-import {Toaster} from "react-hot-toast";
+// import {Toaster} from "react-hot-toast";
 export const metadata: Metadata = {
   title: 'Vodafone Albania Tourist Pack',
   description: 'Stay connected during your visit to Albania with Vodafone special tourist packages. Choose the perfect plan for your needs.',
@@ -59,7 +59,7 @@ export default function RootLayout({
   return (
       <html lang="en">
       <body className="flex flex-col min-h-screen">
-      <Toaster position="top-right" />
+      {/*<Toaster position="top-right" />*/}
       <Providers>
         <Header />
         {/* This main tag will grow to fill available space, pushing the footer down */}

@@ -4,7 +4,7 @@ import { MonthlyRevenue, OrderStatusDistribution, PopularItem } from "@/domain/t
 import { Property } from "csstype";
 import Order = Property.Order;
 
-const BACKEND_URL = process.env.SPRING_API_URL ?? "http://localhost:8080/api";
+const BACKEND_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 async function fetcher<T>(endpoint: string): Promise<T> {
     const headers: Record<string, string> = {
@@ -12,13 +12,7 @@ async function fetcher<T>(endpoint: string): Promise<T> {
         Accept: "application/json",
     };
 
-        const { cookies } = await import("next/headers");
-        const token = (await cookies()).get("token")?.value;
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-
-    const response = await fetch(`${BACKEND_URL}/orders${endpoint}`, {
+    const response = await fetch(`${BACKEND_URL}/api/orders${endpoint}`, {
         method: "GET",
         headers,
         credentials: "include", // only matters if same-origin cookies exist

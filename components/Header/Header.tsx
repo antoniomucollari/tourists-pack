@@ -1,17 +1,18 @@
 "use client";
 
 import img from "../../public/assets/logo.webp";
-import { useEffect, useState, useRef } from "react"; // <-- Import useRef
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import CartIcon from "@/components/smallComponents/cartIcon/CartIcon";
 import { useHybridCart } from "@/hooks/useHybridCart";
 import SearchBar from "@/components/Search/SearchBar";
 import AuthButtons from "@/components/Header/AuthButtons";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Header() {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { isEmpty, totalUniqueItems } = useHybridCart();
     const [isClient, setIsClient] = useState(false);
@@ -21,20 +22,11 @@ export default function Header() {
     const prevTotalItems = useRef(totalUniqueItems);
 
     useEffect(() => {
-        // Only trigger animation if the number of items has increased
         if (totalUniqueItems > prevTotalItems.current) {
             setIsAnimating(true);
-
-            // Remove the animation class after the animation duration (500ms)
-            const timer = setTimeout(() => {
-                setIsAnimating(false);
-            }, 500);
-
-            // Cleanup the timer if the component unmounts
+            const timer = setTimeout(() => setIsAnimating(false), 500);
             return () => clearTimeout(timer);
         }
-
-        // Update the previous items ref for the next render
         prevTotalItems.current = totalUniqueItems;
     }, [totalUniqueItems]);
     // --- ANIMATION LOGIC END ---
@@ -43,10 +35,12 @@ export default function Header() {
         setIsClient(true);
     }, []);
 
+    // ✅ hide header for login, register, dashboard paths, OR if ?dashboard query exists
     if (
         pathname?.startsWith("/login") ||
         pathname?.startsWith("/register") ||
-        pathname?.startsWith("/dashboard")
+        pathname?.startsWith("/dashboard") ||
+        searchParams.has("dashboard")
     ) return null;
 
     const menuItems = [
@@ -83,22 +77,19 @@ export default function Header() {
                 {/* Header Buttons */}
                 <div className="header-buttons">
                     <SearchBar />
-
                     <AuthButtons />
-
-                    {/* END: Login Button */}
 
                     <div className="cart-icon-container">
                         <Link href="/cart" className="header-button">
                             <CartIcon width={25} height={25} />
                         </Link>
                         {isClient && !isEmpty && (
-                            // --- Apply the animation class conditionally ---
-                            <span className={`cart-badge ${isAnimating ? 'updated' : ''}`}>
-                {totalUniqueItems}
-              </span>
+                            <span className={`cart-badge ${isAnimating ? "updated" : ""}`}>
+                                {totalUniqueItems}
+                            </span>
                         )}
                     </div>
+
                     <button
                         className="mobile-menu-button"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
