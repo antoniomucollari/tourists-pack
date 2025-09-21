@@ -1,7 +1,6 @@
 // file: middleware.ts purpose-> protecting pages on the server before they are rendered
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import product from "@/domain/Product";
 
 const protectedRoutes = ['/userSettings', '/orders'];
 const adminRoutes = ['/dashboard','/products'];
@@ -19,15 +18,14 @@ export function middleware(request: NextRequest) {
         );
     }
 
-    // Redirect unauthenticated users from protected routes
-    if (isProtectedRoute && !token) {
+    if (!token && isProtectedRoute) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
     if (token && pathname === '/login') {
         return NextResponse.redirect(new URL('/', request.url));
     }
     // Handle authorization for admin routes
-    if (isAdminRoute) {
+    if (isAdminRoute(pathname)) {
         const rolesCookie = request.cookies.get('roles')?.value;
         if (!rolesCookie) {
             return NextResponse.redirect(new URL('/unauthorized', request.url));
@@ -47,5 +45,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/dashboard', '/admin/:path*', '/admin', '/login', '/products/:path*', '/products']
+    matcher: ['/dashboard/:path*', '/dashboard', "/login", '/admin/:path*', '/admin', '/products/:path*', '/products']
 };

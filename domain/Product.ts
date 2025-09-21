@@ -9,8 +9,7 @@ interface ProductBase {
     price: number;
 }
 
-// This uses TypeScript's discriminated union.
-// The 'productType' field will tell us whether to expect Packet or Electronics fields.
+
 type Product = ProductBase & (
     {
         productType: 'PACKET';
@@ -18,7 +17,7 @@ type Product = ProductBase & (
     |
     {
         productType: 'ELECTRONICS';
-    } & Electronics // If type is ELECTRONICS, it will have Electronics' fields
+    } & Electronics
     );
 
 export default Product;
