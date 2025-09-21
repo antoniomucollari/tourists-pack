@@ -1,17 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getProductById, deleteProduct } from '@/lib/productApi';
-import Product from '@/domain/Product';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getProductById, deleteProduct } from "@/lib/productApi";
+import Product from "@/domain/Product";
+import Link from "next/link";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { useToast } from "@/context/ToastContext";
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
-  const productId = parseInt( params.id, 10);
+  const { showSuccess, showError } = useToast();
+  const productId = parseInt(params.id, 10);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -21,7 +30,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         setProduct(data);
         setError(null);
       } catch (err) {
-        setError('Failed to load product details. Please try again later.');
+        setError("Failed to load product details. Please try again later.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -31,20 +40,26 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     if (!isNaN(productId)) {
       fetchProduct();
     } else {
-      setError('Invalid product ID');
+      setError("Invalid product ID");
       setLoading(false);
     }
   }, [productId]);
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await deleteProduct(productId);
-        router.push('/products');
-      } catch (err) {
-        setError('Failed to delete product. Please try again later.');
-        console.error(err);
-      }
+    setIsDeleting(true);
+    try {
+      await deleteProduct(productId);
+      showSuccess("Product Deleted", "Product has been deleted successfully.");
+      router.push("/products");
+    } catch (err) {
+      showError(
+        "Delete Failed",
+        "Failed to delete product. Please try again later."
+      );
+      console.error(err);
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
     }
   };
 
@@ -59,7 +74,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   if (error) {
     return (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <div
+        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert"
+      >
         <span className="block sm:inline">{error}</span>
       </div>
     );
@@ -75,6 +93,18 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   return (
     <div className="container mx-auto">
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${product.name}"? This action cannot be undone.`}
+        type="danger"
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isDeleting}
+      />
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">{product.name}</h1>
         <div className="flex gap-2">
@@ -85,11 +115,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             Edit
           </Link>
           <button
-            onClick={handleDelete}
+            onClick={() => setIsDeleteModalOpen(true)}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
           >
             Delete
           </button>
+          <button onClick={() => showError("Error!", "Something went wrong.")}>click me</button>
           <Link
             href="/products"
             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
@@ -125,11 +156,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 <div>
                   <span className="text-gray-600 font-medium">Type:</span>
                   <span className="ml-2">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      product.productType === 'PACKET' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-green-100 text-green-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        product.productType === "PACKET"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
                       {product.productType}
                     </span>
                   </span>
@@ -140,10 +173,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {/* Right column - Type-specific details */}
             <div>
               <h2 className="text-xl font-semibold mb-4">
-                {product.productType === 'PACKET' ? 'Packet Details' : 'Electronics Details'}
+                {product.productType === "PACKET"
+                  ? "Packet Details"
+                  : "Electronics Details"}
               </h2>
-              
-              {product.productType === 'PACKET' && (
+
+              {product.productType === "PACKET" && (
                 <div className="space-y-3">
                   <div>
                     <span className="text-gray-600 font-medium">Duration:</span>
@@ -151,7 +186,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   </div>
                   <div>
                     <span className="text-gray-600 font-medium">Popular:</span>
-                    <span className="ml-2">{product.isPopular ? 'Yes' : 'No'}</span>
+                    <span className="ml-2">
+                      {product.isPopular ? "Yes" : "No"}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-600 font-medium">Features:</span>
@@ -163,31 +200,39 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   </div>
                 </div>
               )}
-              
-              {product.productType === 'ELECTRONICS' && (
+
+              {product.productType === "ELECTRONICS" && (
                 <div className="space-y-3">
                   <div>
-                    <span className="text-gray-600 font-medium">Product Size:</span>
+                    <span className="text-gray-600 font-medium">
+                      Product Size:
+                    </span>
                     <span className="ml-2">{product.productSize}</span>
                   </div>
                   {product.discountPrice !== undefined && (
                     <div>
-                      <span className="text-gray-600 font-medium">Discount Price:</span>
+                      <span className="text-gray-600 font-medium">
+                        Discount Price:
+                      </span>
                       <span className="ml-2">${product.discountPrice}</span>
                     </div>
                   )}
                   <div>
-                    <span className="text-gray-600 font-medium">Stock Number:</span>
+                    <span className="text-gray-600 font-medium">
+                      Stock Number:
+                    </span>
                     <span className="ml-2">{product.stockNumber}</span>
                   </div>
                   {product.imageUrl && (
                     <div className="mt-4">
-                      <span className="text-gray-600 font-medium block mb-2">Product Image:</span>
-                      <img 
-                        src={product.imageUrl} 
-                        alt={product.name} 
+                      <span className="text-gray-600 font-medium block mb-2">
+                        Product Image:
+                      </span>
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
                         className="max-w-full h-auto rounded-lg border border-gray-200"
-                        style={{ maxHeight: '200px' }}
+                        style={{ maxHeight: "200px" }}
                       />
                     </div>
                   )}

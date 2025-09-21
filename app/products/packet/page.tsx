@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAllProducts, deleteProduct } from '@/lib/productApi';
-import Product from '@/domain/Product';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getAllProducts, deleteProduct } from "@/lib/productApi";
+import Product from "@/domain/Product";
+import Link from "next/link";
 
 export default function PacketProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const data = await getAllProducts(searchTerm || undefined, 'PACKET');
+      const data = await getAllProducts(searchTerm || undefined, "PACKET");
       setProducts(data);
       setError(null);
     } catch (err) {
-      setError('Failed to load packet products. Please try again later.');
+      setError("Failed to load packet products. Please try again later.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -32,14 +32,12 @@ export default function PacketProductsPage() {
   }, [searchTerm]);
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await deleteProduct(id);
-        setProducts(products.filter(product => product.id !== id));
-      } catch (err) {
-        setError('Failed to delete product. Please try again later.');
-        console.error(err);
-      }
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (err) {
+      setError("Failed to delete product. Please try again later.");
+      console.error(err);
     }
   };
 
@@ -48,8 +46,8 @@ export default function PacketProductsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Packet Products</h1>
         <div className="flex gap-2">
-          <Link 
-            href="/products/create" 
+          <Link
+            href="/products/create"
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
           >
             Add New Product
@@ -79,12 +77,18 @@ export default function PacketProductsPage() {
           <p className="mt-2 text-gray-600">Loading packet products...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
           <span className="block sm:inline">{error}</span>
         </div>
       ) : products.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-600">No packet products found. Try adjusting your search or create a new packet product.</p>
+          <p className="text-gray-600">
+            No packet products found. Try adjusting your search or create a new
+            packet product.
+          </p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -101,7 +105,10 @@ export default function PacketProductsPage() {
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-t border-gray-200 hover:bg-gray-50">
+                <tr
+                  key={product.id}
+                  className="border-t border-gray-200 hover:bg-gray-50"
+                >
                   <td className="py-3 px-4">{product.id}</td>
                   <td className="py-3 px-4">{product.name}</td>
                   <td className="py-3 px-4">{product.duration} days</td>

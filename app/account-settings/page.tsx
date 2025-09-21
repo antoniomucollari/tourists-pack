@@ -4,148 +4,185 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+// Assuming these components and context are correctly pathed in your project
 import SelectImage from "@/components/SelectImage";
-import {useAuth} from "@/context/AuthContext";
-import {validationSchema} from "@/app/account-settings/validation";
+import { useAuth } from "@/context/AuthContext";
 
+// Define the shape of the form data
 interface UserCredentials {
-    name: string;
-    email: string;
-    phoneNumber: string;
-    address: string;
-    profileUrl: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  profileUrl: string; // This will be a URL string from the user object
 }
-const FILE_SIZE = 2 * 1024 * 1024; // 2MB
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
-const validationRules = yup.object({
-    name: yup.string().required("Name is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: yup.string().required("Phone number is required"),
-    address: yup.string().required("Address is required"),
-    profileUrl: yup
-        .mixed<FileList>()
-        .test("fileSize", "The file is too large (max 2MB)", (value) => {
-            if (!value || value.length === 0) return true; // Optional
-            return value[0].size <= FILE_SIZE;
-        })
-        .test("fileType", "Unsupported file format", (value) => {
-            if (!value || value.length === 0) return true; // Optional
-            return SUPPORTED_FORMATS.includes(value[0].type);
-        })
-        .nullable(),
+
+// Define the validation schema for the form fields
+const validationSchema = yup.object({
+  name: yup.string().required("Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phoneNumber: yup.string().required("Phone number is required"),
+  address: yup.string().required("Address is required"),
+  // Note: The file itself is handled separately and not part of the yup schema here
+  // as it's uploaded via FormData.
 });
 
 export default function UserUpdateForm() {
-    const { user,login } = useAuth();
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { user, login } = useAuth(); // Assuming login function refreshes user data
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors, isValid, isSubmitting },
-    } = useForm<UserCredentials>({
-        resolver: yupResolver(validationSchema),
-        mode: "onChange",
-    });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<UserCredentials>({
+    resolver: yupResolver(validationSchema),
+    mode: "onChange", // Validate on change for instant feedback
+  });
 
-    useEffect(() => {
-        if (user) {
-            reset({
-                name: user.name,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                address: user.address,
-                profileUrl: user.profileUrl,
-            });
-        }
-    }, [user, reset]);
-
-    async function onSubmit(data: UserCredentials) {
-        try {
-            const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("email", data.email);
-            formData.append("phoneNumber", data.phoneNumber);
-            formData.append("address", data.address);
-
-            if (selectedFile) {
-                formData.append("image", selectedFile);
-            }
-
-            await fetch("/api/users/update", {
-                method: "PUT",
-                body: formData,
-
-            });
-            await login();
-        } catch (err) {
-            console.error(err);
-            alert("Failed to update profile");
-        }
+  // Populate the form with user data when it becomes available
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        profileUrl: user.profileUrl,
+      });
     }
-    console.log(user);
-    return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 max-w-md mx-auto bg-white p-6 rounded-lg shadow"
-        >
-            <div>
-                <label className="block mb-1 font-medium">Name</label>
-                <input
-                    type="text"
-                    {...register("name")}
-                    className="w-full border p-2 rounded"
-                />
-                {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-            </div>
+  }, [user, reset]);
 
-            <div>
-                <label className="block mb-1 font-medium">Email</label>
-                <input
-                    type="email"
-                    {...register("email")}
-                    className="w-full border p-2 rounded"
-                />
-                {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-            </div>
+  // Handle form submission
+  async function onSubmit(data: UserCredentials) {
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("phoneNumber", data.phoneNumber);
+      formData.append("address", data.address);
 
-            <div>
-                <label className="block mb-1 font-medium">Phone Number</label>
-                <input
-                    type="text"
-                    {...register("phoneNumber")}
-                    className="w-full border p-2 rounded"
-                />
-                {errors.phoneNumber && (
-                    <p className="text-red-500">{errors.phoneNumber.message}</p>
-                )}
-            </div>
+      // Only append the image if a new one was selected
+      if (selectedFile) {
+        formData.append("image", selectedFile);
+      }
 
-            <div>
-                <label className="block mb-1 font-medium">Address</label>
-                <input
-                    type="text"
-                    {...register("address")}
-                    className="w-full border p-2 rounded"
-                />
-                {errors.address && (
-                    <p className="text-red-500">{errors.address.message}</p>
-                )}
-            </div>
+      // Replace with your actual API endpoint and logic
+      await fetch("/api/users/update", {
+        method: "PUT",
+        body: formData,
+      });
 
-            {/* ✅ Image selection with your existing component */}
-            <SelectImage
-                imgUrl={user?.profileUrl}
-                selectedImage={(file) => setSelectedFile(file)}/>
+      // Refresh user data in the context after successful submission
+      await login();
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      // You can add a toast notification here for the error
+    }
+  }
 
-            <button
-                type="submit"
-                disabled={!isValid || isSubmitting}
-                className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-            >
-                {isSubmitting ? "Updating..." : "Update Profile"}
-            </button>
-        </form>
-    );
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mx-auto max-w-lg space-y-6 rounded-xl bg-white p-8 shadow-lg"
+    >
+      <div className="space-y-4">
+        {/* Profile Image Selection */}
+        <SelectImage
+          imgUrl={user?.profileUrl}
+          selectedImage={(file) => setSelectedFile(file)}
+        />
+
+        {/* Name Input */}
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            {...register("name")}
+            className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-red-500 focus:ring-red-500"
+          />
+          {errors.name && (
+            <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
+          )}
+        </div>
+
+        {/* Email Input */}
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register("email")}
+            className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-red-500 focus:ring-red-500"
+          />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Phone Number Input */}
+        <div>
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Phone Number
+          </label>
+          <input
+            id="phoneNumber"
+            type="text"
+            {...register("phoneNumber")}
+            className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-red-500 focus:ring-red-500"
+          />
+          {errors.phoneNumber && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.phoneNumber.message}
+            </p>
+          )}
+        </div>
+
+        {/* Address Input */}
+        <div>
+          <label
+            htmlFor="address"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Address
+          </label>
+          <input
+            id="address"
+            type="text"
+            {...register("address")}
+            className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-red-500 focus:ring-red-500"
+          />
+          {errors.address && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.address.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={!isValid || isSubmitting}
+        className="w-full rounded-lg bg-[#e60000] px-4 py-3 font-semibold text-white shadow-md transition-colors hover:bg-[#c00000] disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {isSubmitting ? "Updating..." : "Update Profile"}
+      </button>
+    </form>
+  );
 }

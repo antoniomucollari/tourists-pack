@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getAllProducts, deleteProduct } from '@/lib/productApi';
-import Product from '@/domain/Product';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getAllProducts, deleteProduct } from "@/lib/productApi";
+import Product from "@/domain/Product";
+import Link from "next/link";
 
 export default function ElectronicsProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const data = await getAllProducts(searchTerm || undefined, 'ELECTRONICS');
+      const data = await getAllProducts(searchTerm || undefined, "ELECTRONICS");
       setProducts(data);
       setError(null);
     } catch (err) {
-      setError('Failed to load electronics products. Please try again later.');
+      setError("Failed to load electronics products. Please try again later.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -32,14 +32,12 @@ export default function ElectronicsProductsPage() {
   }, [searchTerm]);
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await deleteProduct(id);
-        setProducts(products.filter(product => product.id !== id));
-      } catch (err) {
-        setError('Failed to delete product. Please try again later.');
-        console.error(err);
-      }
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (err) {
+      setError("Failed to delete product. Please try again later.");
+      console.error(err);
     }
   };
 
@@ -48,8 +46,8 @@ export default function ElectronicsProductsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Electronics Products</h1>
         <div className="flex gap-2">
-          <Link 
-            href="/products/create" 
+          <Link
+            href="/products/create"
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
           >
             Add New Product
@@ -79,12 +77,18 @@ export default function ElectronicsProductsPage() {
           <p className="mt-2 text-gray-600">Loading electronics products...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
           <span className="block sm:inline">{error}</span>
         </div>
       ) : products.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-600">No electronics products found. Try adjusting your search or create a new electronics product.</p>
+          <p className="text-gray-600">
+            No electronics products found. Try adjusting your search or create a
+            new electronics product.
+          </p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -103,13 +107,16 @@ export default function ElectronicsProductsPage() {
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-t border-gray-200 hover:bg-gray-50">
+                <tr
+                  key={product.id}
+                  className="border-t border-gray-200 hover:bg-gray-50"
+                >
                   <td className="py-3 px-4">{product.id}</td>
                   <td className="py-3 px-4">
                     {product.imageUrl ? (
-                      <img 
-                        src={product.imageUrl} 
-                        alt={product.name} 
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
                         className="w-16 h-16 object-cover rounded-md"
                       />
                     ) : (
@@ -123,19 +130,23 @@ export default function ElectronicsProductsPage() {
                   <td className="py-3 px-4">${product.price.toFixed(2)}</td>
                   <td className="py-3 px-4">
                     {product.discountPrice ? (
-                      <span className="text-red-600">${product.discountPrice.toFixed(2)}</span>
+                      <span className="text-red-600">
+                        ${product.discountPrice.toFixed(2)}
+                      </span>
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      product.stockNumber > 10 
-                        ? 'bg-green-100 text-green-800' 
-                        : product.stockNumber > 0 
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        product.stockNumber > 10
+                          ? "bg-green-100 text-green-800"
+                          : product.stockNumber > 0
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {product.stockNumber}
                     </span>
                   </td>

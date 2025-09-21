@@ -9,8 +9,10 @@ import { useHybridCart } from "@/hooks/useHybridCart";
 import SearchBar from "@/components/Search/SearchBar";
 import AuthButtons from "@/components/Header/AuthButtons";
 import { usePathname, useSearchParams } from "next/navigation";
+import {useAuth} from "@/context/AuthContext";
 
 export default function Header() {
+    const {isAdmin} = useAuth();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -82,9 +84,9 @@ export default function Header() {
                     <AuthButtons />
 
                     <div className="cart-icon-container">
-                        <Link href="/cart" className="header-button">
-                            <CartIcon width={25} height={25} />
-                        </Link>
+                        {isAdmin ?? <Link href="/cart" className="header-button">
+                            <CartIcon width={25} height={25}/>
+                        </Link>}
                         {isClient && !isEmpty && (
                             <span className={`cart-badge ${isAnimating ? "updated" : ""}`}>
                                 {totalUniqueItems}

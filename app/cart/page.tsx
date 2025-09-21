@@ -13,7 +13,7 @@ export default function CartPage() {
     const router = useRouter();
     const { isLoading, isEmpty, items, updateItemQuantity, removeItem, cartTotal } =
         useHybridCart();
-    const { isLoading: authLoading } = useAuth();
+    const { isLoading: authLoading ,isAdmin} = useAuth();
 
     const handleCheckout = async () => {
         setError(null);
@@ -42,8 +42,19 @@ export default function CartPage() {
         }
     };
 
+    if (isAdmin) {
+        return (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+                <h2 className="text-lg font-semibold text-gray-800">
+                    Admins cannot access the cart
+                </h2>
+                <p className="mt-2 text-sm text-gray-600">
+                    Please log in as a customer to view your cart.
+                </p>
+            </div>
+        );
+    }
     if (!isLoading && isEmpty && !authLoading) return <EmptyCart />;
-
     return (
         <div className="bg-gray-100 min-h-screen font-sans">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -10,7 +10,7 @@ async function getProductById(id: string): Promise<Product | null> {
     try {
         // Use an absolute URL for server-side fetching
         const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/products/${id}`, {
-            cache: 'no-store', // Use 'no-store' for dynamic data
+            cache: 'no-store',
         });
 
         if (!response.ok) {
@@ -27,15 +27,13 @@ async function getProductById(id: string): Promise<Product | null> {
 
 // This is the main Server Component for the page
 export default async function ProductPage({ params }: { params: { id: string } }) {
-    // 1. Fetch the data on the server using the ID from the URL
     const product = await getProductById(params.id);
 
-    // 2. If no product is found, show the 404 page
+
     if (!product) {
         notFound();
     }
 
-    // 3. Render the Client Component and pass the fetched product data as a prop
     return (
         <main className="bg-white">
             <div className="container mx-auto px-4 py-8 md:py-12">

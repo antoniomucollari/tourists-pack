@@ -56,6 +56,7 @@ export default function Footer() {
       pathname?.startsWith("/register") ||
       pathname?.startsWith("/dashboard") ||
       pathname?.startsWith("/unauthorized") ||
+      pathname?.startsWith("/products") ||
       searchParams.has("dashboard")
   ) return null;
   return (

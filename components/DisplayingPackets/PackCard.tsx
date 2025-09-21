@@ -1,4 +1,5 @@
 import { useHybridCart } from "@/hooks/useHybridCart";
+import {useAuth} from "@/context/AuthContext";
 
 interface PackCardProps {
   id: string;
@@ -10,10 +11,9 @@ interface PackCardProps {
 }
 
 export default function PackCard(product: PackCardProps) {
-
-    const { addItem } = useHybridCart();
-
-    return (
+  const { addItem } = useHybridCart();
+    const {isAdmin} = useAuth();
+  return (
     <div className="pack-card">
       <div className="pack-header">
         <h3 className="pack-title">{product.title}</h3>
@@ -35,8 +35,20 @@ export default function PackCard(product: PackCardProps) {
       <div className="pack-footer">
         <button
           className="pack-button"
-          onClick={()=> addItem(product)}
-          disabled={false}>
+          onClick={() =>
+            addItem({
+              id: product.id,
+              name: product.title,
+              subtitle: product.subtitle,
+              price: product.price,
+              productType: "PACKET",
+              duration: parseInt(product.duration),
+              features: product.features,
+              isPopular: false,
+            })
+          }
+          disabled={isAdmin}
+        >
           Activate
         </button>
       </div>
