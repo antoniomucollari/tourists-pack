@@ -27,8 +27,8 @@ const useHybridCart = () => ({
 export default function ProductDetailsClient({product}: {
   product: Product;
 }) {
+  const {isAdmin} = useAuth();
   const { addItem } = useHybridCart();
-  const isAdmin = useAuth();
 
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat("en-US", {

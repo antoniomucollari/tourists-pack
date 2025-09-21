@@ -83,16 +83,16 @@ export default function Header() {
                     <SearchBar />
                     <AuthButtons />
 
-                    <div className="cart-icon-container">
-                        {isAdmin ?? <Link href="/cart" className="header-button">
+                    {!isAdmin && <div className="cart-icon-container">
+                         <Link href="/cart" className="header-button">
                             <CartIcon width={25} height={25}/>
-                        </Link>}
+                        </Link>
                         {isClient && !isEmpty && (
                             <span className={`cart-badge ${isAnimating ? "updated" : ""}`}>
                                 {totalUniqueItems}
                             </span>
                         )}
-                    </div>
+                    </div>}
 
                     <button
                         className="mobile-menu-button"
