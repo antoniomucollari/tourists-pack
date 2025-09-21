@@ -2,6 +2,7 @@
 
 import React from "react";
 import {useAuth} from "@/context/AuthContext";
+import {useHybridCart} from "@/context/CartContext";
 
 // NOTE: The following are placeholders for your actual types and hooks.
 // Ensure the paths are correct in your project structure.
@@ -17,11 +18,6 @@ type Product = {
   productType?: string; // Added for addItem
 };
 
-const useHybridCart = () => ({
-  addItem: (product: Product) => {
-    console.log("Added to cart:", product.name);
-  },
-});
 
 
 export default function ProductDetailsClient({product}: {
