@@ -1,3 +1,6 @@
+"use client"
+import {usePathname, useSearchParams} from "next/navigation";
+
 const footerLinks = {
   company: [
     { href: "/about", label: "About Us" },
@@ -46,6 +49,15 @@ const FooterSection = ({
 );
 
 export default function Footer() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  if (
+      pathname?.startsWith("/login") ||
+      pathname?.startsWith("/register") ||
+      pathname?.startsWith("/dashboard") ||
+      pathname?.startsWith("/unauthorized") ||
+      searchParams.has("dashboard")
+  ) return null;
   return (
     <footer className="footer">
       <div className="footer-content">

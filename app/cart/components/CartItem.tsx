@@ -23,7 +23,7 @@ export default function CartItem({ item, updateItemQuantity, removeItem }: Props
             />
             <div className="flex-1">
                 <h3 className="font-bold text-lg text-gray-800">{item.name}</h3>
-                    <p className="text-gray-500 text-sm mt-1">{item.productType.toLowerCase()}</p>
+                    <p className="text-gray-500 text-sm mt-1">{item.productType}</p>
             </div>
             <div className="flex items-center border border-gray-200 rounded-full">
                 <button

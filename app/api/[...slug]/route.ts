@@ -15,7 +15,7 @@ async function handler(req: NextRequest, { params }: { params: { slug: string[] 
     }
 
     const token = (await cookies()).get("token")?.value;
-    const path = params.slug.join('/');
+    const path = (await params).slug.join('/');
     const url = `${BACKEND_URL}/${path}${req.nextUrl.search}`;
 
     const headers: Record<string, string> = {

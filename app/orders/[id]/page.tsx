@@ -7,19 +7,20 @@ import Order from '@/domain/Order';
 import Link from "next/link";
 import { OrderDetailPageSkeleton } from "@/app/orders/OrderDetailPageSkeleton";
 import { useSearchParams } from 'next/navigation';
-
-// Import color maps
 import { OrderColors, PaymentColors } from "@/lib/OrderColors";
+import toast from "react-hot-toast";
+import {useAuth} from "@/context/AuthContext";
 
-// --- COMPONENT ---
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const unwrappedParams = React.use(params);
-    const { id } = unwrappedParams;
+export default function OrderDetailPage({ params }: { params: { id: string } }) {
+    const { id } = params;
 
     const searchParams = useSearchParams();
     const [order, setOrder] = useState<Order | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const {isAdmin} = useAuth();
 
     const cameFromDashboard = searchParams.has('dashboard');
     const backHref = cameFromDashboard ? '/dashboard' : '/orders';
@@ -29,7 +30,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         if (id) {
             fetchOrderDetail();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const fetchOrderDetail = async () => {
@@ -39,36 +39,68 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             const response = await axios.get<{ data: Order }>(`/api/orders/get-by-id/${id}`);
             setOrder(response.data.data);
         } catch (err) {
-            setError("Failed to fetch order details. The order may not exist or you may not have permission to view it.");
+            setError("Failed to fetch order details.");
             console.error(err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    if (isLoading) {
-        return <OrderDetailPageSkeleton />;
-    }
+    const handleOrderStatusUpdate = async (value: string) => {
+        if (!order) return;
+        setIsUpdating(true);
 
-    if (error) {
-        return (
-            <div className="p-6 text-center text-red-600">
-                <p>{error}</p>
-                <Link
-                    href={backHref}
-                    className="mt-4 inline-block text-white bg-[#e60000] px-6 py-2 rounded-lg hover:bg-red-700"
-                >
-                    {backText}
-                </Link>
-            </div>
-        );
-    }
+        try {
+            await axios.put('/api/orders/update-status', {
+                id: order.id,
+                orderStatus: value,
+                paymentStatus: order.paymentStatus,
+            });
+            await fetchOrderDetail();
+            toast.success(`Order status updated to ${value}`);
+        } catch (err) {
+            console.error("Failed to update order status", err);
+            toast.error("Failed to update order status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
-    if (!order) {
-        return <div className="p-6 text-center">Order not found.</div>;
-    }
+    const handlePaymentStatusUpdate = async (value: string) => {
+        if (!order) return;
+        setIsUpdating(true);
 
-    // --- COLORS ---
+        try {
+            await axios.put('/api/orders/update-status', {
+                id: order.id,
+                orderStatus: order.orderStatus,
+                paymentStatus: value,
+            });
+            await fetchOrderDetail(); // ⬅️ reload from backend
+            toast.success(`Payment status updated to ${value}`);
+        } catch (err) {
+            console.error("Failed to update payment status", err);
+            toast.error("Failed to update payment status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    if (isLoading) return <OrderDetailPageSkeleton />;
+    if (error) return (
+        <div className="p-6 text-center text-red-600">
+            <p>{error}</p>
+            <Link
+                href={backHref}
+                className="mt-4 inline-block text-white bg-[#e60000] px-6 py-2 rounded-lg hover:bg-red-700"
+            >
+                {backText}
+            </Link>
+        </div>
+    );
+
+    if (!order) return <div className="p-6 text-center">Order not found.</div>;
+
     const orderColor = OrderColors[order.orderStatus as keyof typeof OrderColors] || "#6B7280";
     const paymentColor = PaymentColors[order.paymentStatus as keyof typeof PaymentColors] || "#6B7280";
 
@@ -92,23 +124,52 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Order Status */}
                     <div>
                         <h2 className="font-semibold text-lg mb-2">Order Status</h2>
-                        <span
-                            className="px-3 py-1 rounded-full text-sm font-medium"
-                            style={{ backgroundColor: `${orderColor}20`, color: orderColor }}
-                        >
-                            {order.orderStatus}
-                        </span>
+                        {isAdmin ? (
+                            <select
+                                value={order.orderStatus}
+                                onChange={(e) => handleOrderStatusUpdate(e.target.value)}
+                            >
+                                {Object.keys(OrderColors).map((status) => (
+                                    <option key={status} value={status}>
+                                        {status.replaceAll("_", " ")}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <span
+                                className="px-3 py-1 rounded-full text-sm font-medium"
+                                style={{ backgroundColor: `${orderColor}20`, color: orderColor }}
+                            >
+                                {order.orderStatus}
+                            </span>
+                        )}
                     </div>
+
+                    {/* Payment Status */}
                     <div>
                         <h2 className="font-semibold text-lg mb-2">Payment Status</h2>
-                        <span
-                            className="px-3 py-1 rounded-full text-sm font-medium"
-                            style={{ backgroundColor: `${paymentColor}20`, color: paymentColor }}
-                        >
-                            {order.paymentStatus}
-                        </span>
+                        {isAdmin ? (
+                            <select
+                                value={order.paymentStatus}
+                                onChange={(e) => handlePaymentStatusUpdate(e.target.value)}
+                            >
+                                {["PENDING", "COMPLETED", "FAILED", "REFUNDED", "EXPIRED", "REJECTED", "CANCELED"].map((status) => (
+                                    <option key={status} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <span
+                                className="px-3 py-1 rounded-full text-sm font-medium"
+                                style={{ backgroundColor: `${paymentColor}20`, color: paymentColor }}
+                            >
+                                {order.paymentStatus}
+                            </span>
+                        )}
                     </div>
                 </div>
 

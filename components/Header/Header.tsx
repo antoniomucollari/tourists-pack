@@ -40,6 +40,8 @@ export default function Header() {
         pathname?.startsWith("/login") ||
         pathname?.startsWith("/register") ||
         pathname?.startsWith("/dashboard") ||
+        pathname?.startsWith("/products") ||
+        pathname?.startsWith("/unauthorized") ||
         searchParams.has("dashboard")
     ) return null;
 
