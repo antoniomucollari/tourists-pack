@@ -1,7 +1,6 @@
 import Electronics from './Electronics';
 import Packet from './Packet';
 
-// This is the base for all products, containing common fields.
 interface ProductBase {
     id: number;
     name: string;

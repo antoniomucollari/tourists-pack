@@ -28,12 +28,12 @@ export default function CartItem({
       // Packets have a fixed price, quantity is always 1
       return item.price * 1;
     }
-    // Default behavior for any other product types
     return item.price;
   };
 
   // Helper function for explicit image logic
   const getImageUrl = (item: Product) => {
+      console.log(item)
     if (item.productType === "ELECTRONICS") {
       return item.imageUrl;
     }
@@ -42,7 +42,7 @@ export default function CartItem({
       return `https://publish.oneappcms.vodafone.com/content/dam/multimedia/oneappcms/al/web%20assets/New%20images%20for%20homepage%20test/herobanner-images/RoamingHerobanner.jpg`;
     }
     // A fallback image for any other/new product types
-    return "/default-placeholder.png";
+    return "https://ito-group.com/wp-content/uploads/2025/04/no-image.jpg";
   };
 
   // Helper function to get display name
@@ -58,7 +58,7 @@ export default function CartItem({
   return (
     <div className="p-6 flex items-center space-x-6 transition-colors hover:bg-gray-50">
       <img
-        src={getImageUrl(item)} // <-- Use the helper function
+        src={getImageUrl(item)}
         alt={getDisplayName(item)}
         className="w-28 h-28 object-cover rounded-lg shadow-sm"
       />
