@@ -4,8 +4,6 @@ import React from "react";
 import {useAuth} from "@/context/AuthContext";
 import {useHybridCart} from "@/context/CartContext";
 
-// NOTE: The following are placeholders for your actual types and hooks.
-// Ensure the paths are correct in your project structure.
 type Product = {
   id: string | number;
   name: string;
@@ -27,14 +25,13 @@ export default function ProductDetailsClient({product}: {
   const { addItem } = useHybridCart();
 
   const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("sq-AL", {
       style: "currency",
       currency: "ALL",
-    })
-        .format(amount)
-        .replace("ALL", "ALL ");
+      minimumFractionDigits: 0, // Lek usually doesn't use decimals
+      maximumFractionDigits: 0,
+    }).format(amount);
   };
-
   return (
       <div className="lg:grid lg:grid-cols-2 lg:gap-x-10">
         {/* Image gallery */}
@@ -61,7 +58,7 @@ export default function ProductDetailsClient({product}: {
                     {formatPrice(product.discountPrice)}
                   </p>
                   <p className="text-xl tracking-tight text-gray-500 line-through">
-                    {formatPrice(product.price)}
+                    ALL {product.price}
                   </p>
                 </div>
             ) : (

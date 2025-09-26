@@ -197,7 +197,7 @@ export default function ProductsPage() {
                       {product.productType}
                     </span>
                       </td>
-                      <td className="py-3 px-4">${product.price.toFixed(2)}</td>
+                      <td className="py-3 px-4">ALL {product.price}</td>
                       <td className="py-3 px-4 flex items-center gap-4">
                         <Link
                             href={`/products/${product.id}`}

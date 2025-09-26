@@ -120,7 +120,6 @@ export default function ProductDetailPage({
           >
             Delete
           </button>
-          <button onClick={() => showError("Error!", "Something went wrong.")}>click me</button>
           <Link
             href="/products"
             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
@@ -151,7 +150,7 @@ export default function ProductDetailPage({
                 </div>
                 <div>
                   <span className="text-gray-600 font-medium">Price:</span>
-                  <span className="ml-2">${product.price}</span>
+                  <span className="ml-2">ALL {product.price}</span>
                 </div>
                 <div>
                   <span className="text-gray-600 font-medium">Type:</span>
@@ -214,7 +213,7 @@ export default function ProductDetailPage({
                       <span className="text-gray-600 font-medium">
                         Discount Price:
                       </span>
-                      <span className="ml-2">${product.discountPrice}</span>
+                      <span className="ml-2">ALL {product.discountPrice}</span>
                     </div>
                   )}
                   <div>

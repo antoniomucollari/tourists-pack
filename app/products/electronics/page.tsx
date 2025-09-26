@@ -127,11 +127,11 @@ export default function ElectronicsProductsPage() {
                   </td>
                   <td className="py-3 px-4">{product.name}</td>
                   <td className="py-3 px-4">{product.productSize}</td>
-                  <td className="py-3 px-4">${product.price.toFixed(2)}</td>
+                  <td className="py-3 px-4">ALL {product.price.toFixed(2)}</td>
                   <td className="py-3 px-4">
                     {product.discountPrice ? (
                       <span className="text-red-600">
-                        ${product.discountPrice.toFixed(2)}
+                        ALL{product.discountPrice.toFixed(2)}
                       </span>
                     ) : (
                       <span className="text-gray-400">-</span>

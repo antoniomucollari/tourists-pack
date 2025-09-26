@@ -2,22 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, ClipboardList, Package, ChevronDown } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function AdminSidebar() {
-    const pathname = window.location.pathname;
+    const pathname = usePathname(); // ✅ Next.js hook instead of window
     const [isProductsOpen, setProductsOpen] = useState(false);
 
-    // Automatically open the products dropdown if the user is on a products-related page
     useEffect(() => {
-        if (pathname.startsWith("/products")) {
+        if (pathname?.startsWith("/products")) {
             setProductsOpen(true);
         }
     }, [pathname]);
 
     const isDashboardActive = pathname === "/dashboard";
-    const isOrdersActive = pathname.startsWith("/dashboard/orders");
-    // The main "Products" button is active if the path starts with /products
-    const isProductsActive = pathname.startsWith("/products");
+    const isOrdersActive = pathname?.startsWith("/dashboard/orders");
+    const isProductsActive = pathname?.startsWith("/products");
 
     return (
         <aside className="w-64 h-screen bg-gray-900 text-gray-300 flex flex-col fixed">
@@ -26,7 +25,6 @@ export default function AdminSidebar() {
             </div>
 
             <nav className="flex-grow p-4 space-y-2">
-                {/* Dashboard Link */}
                 <a
                     href="/dashboard"
                     className={`flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200 ${
@@ -37,7 +35,6 @@ export default function AdminSidebar() {
                     Dashboard
                 </a>
 
-                {/* Orders Link */}
                 <a
                     href="/dashboard/orders"
                     className={`flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200 ${
@@ -48,7 +45,6 @@ export default function AdminSidebar() {
                     Orders
                 </a>
 
-                {/* Products Dropdown */}
                 <div>
                     <button
                         onClick={() => setProductsOpen(!isProductsOpen)}
@@ -67,7 +63,6 @@ export default function AdminSidebar() {
 
                     {isProductsOpen && (
                         <div className="mt-2 pl-8 space-y-1">
-                            {/* All Products Link */}
                             <a
                                 href="/products"
                                 className={`block px-4 py-2 rounded-lg text-sm transition-colors duration-200 ${
@@ -76,7 +71,6 @@ export default function AdminSidebar() {
                             >
                                 All
                             </a>
-                            {/* Packet Link */}
                             <a
                                 href="/products/packet"
                                 className={`block px-4 py-2 rounded-lg text-sm transition-colors duration-200 ${
@@ -85,7 +79,6 @@ export default function AdminSidebar() {
                             >
                                 Packet
                             </a>
-                            {/* Electronics Link */}
                             <a
                                 href="/products/electronics"
                                 className={`block px-4 py-2 rounded-lg text-sm transition-colors duration-200 ${
@@ -105,4 +98,3 @@ export default function AdminSidebar() {
         </aside>
     );
 }
-
